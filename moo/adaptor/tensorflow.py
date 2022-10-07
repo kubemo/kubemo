@@ -1,4 +1,5 @@
-from tensorflow import Tensor
+from typing import List
+from tensorflow import Tensor, concat
 from keras.models import load_model
 from moo import Input, Output, Inference as BaseInference
 
@@ -19,3 +20,6 @@ class Inference(BaseInference):
 
     def postprocess(self, output: Tensor) -> Output:
         raise NotImplementedError
+
+    def concat(self, batch: List[Tensor]) -> Tensor:
+        return concat(batch, axis=0)

@@ -1,5 +1,6 @@
+from typing import List
 from moo.template import Input, Output
-from torch import load, Tensor
+from torch import load, Tensor, cat
 from moo import Inference as BaseInference
 
 
@@ -20,3 +21,6 @@ class Inference(BaseInference):
 
     def postprocess(self, output: Tensor) -> Output:
         raise NotImplementedError
+
+    def concat(self, batch: List[Tensor]) -> Tensor:
+        return cat(batch)

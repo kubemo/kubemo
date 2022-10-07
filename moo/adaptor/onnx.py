@@ -1,4 +1,5 @@
-from numpy import ndarray
+from typing import List
+from numpy import ndarray, concatenate
 from moo import Input, Output, Inference as BaseInference
 from onnxruntime import InferenceSession
 
@@ -20,4 +21,7 @@ class Inference(BaseInference):
 
     def postprocess(self, output: ndarray) -> Output:
         raise NotImplementedError
+
+    def concat(self, batch: List[ndarray]) -> ndarray:
+        return concatenate(batch)
     

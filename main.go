@@ -32,8 +32,9 @@ func main() {
 		log.Fatal(err)
 	}
 	in := proto.PredictRequest{
-		Type: "image",
-		Body: b,
+		Batch: []*proto.Input{
+			{Body: b, Meta: nil},
+		},
 	}
 	out, err := client.Predict(context.TODO(), &in)
 	if err != nil {
@@ -41,9 +42,11 @@ func main() {
 	}
 
 	var v map[string]float32
-	err = json.Unmarshal(out.Body, &v)
-	if err != nil {
-		log.Fatal(err)
+	for _, output := range out.Batch {
+		err = json.Unmarshal(output.Body, &v)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(v)
 	}
-	fmt.Println(v)
 }

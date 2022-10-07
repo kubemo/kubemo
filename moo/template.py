@@ -9,18 +9,31 @@ import numpy
 class Input:
 
     def __init__(self, raw: bytes) -> None:
+        '''Initializes an input.
+
+        Args:
+        raw: Bytes containing input data.
+        '''
         self.raw = raw
+
 
     @property
     def type(self) -> str:
-        raise NotImplementedError
+        return 'dynamic'
 
     def as_image(self) -> Image:
-        raise NotImplementedError
+        '''Returns the underlying input data as a PIL image.
+
+        Raises: exceptions occur if the underlying input data is not an image.
+        '''
+        return Image.open(BytesIO(self.raw))
 
     def as_str(self) -> str:
-        raise NotImplementedError
+        '''Returns the underlying input data as a string.
 
+        Raises: exceptions occur if the underlying input data is not a string.
+        '''
+        return self.raw.decode()
 
 
 class Output:
@@ -31,26 +44,6 @@ class Output:
 
     def encode(self) -> bytes:
         raise NotImplementedError
-
-
-class ImageInput(Input):
-
-    @property
-    def type(self) -> str:
-        return 'image'
-
-    def as_image(self) -> Image.Image:
-        return Image.open(BytesIO(self.raw))
-
-
-class TextInput(Input):
-
-    @property
-    def type(self) -> str:
-        return 'text'
-
-    def as_str(self) -> str:
-        return self.raw.decode()
 
 
 class TextOutput(Output):

@@ -1,4 +1,4 @@
-from typing import Any, Dict, Union, TypeVar
+from typing import Any, Dict, List, Union, TypeVar
 from .template import Input, Output
 from PIL.Image import Image
 
@@ -82,7 +82,7 @@ class Inference:
         '''
         raise NotImplementedError
 
-    def forward(self, input: Tensor, **kargs) -> Tensor:
+    def forward(self, batch: Tensor, **kargs) -> Tensor:
         '''Calls the model to make an inference.
 
         The tensor returned by method preprocess is passed to this method, in
@@ -125,10 +125,24 @@ class Inference:
         raise NotImplementedError
 
 
-    def __call__(self, input: Input) -> Output:
-        x = self.preprocess(input)
-        y = self.forward(x)
-        return self.postprocess(y)
+    def concat(self, batch: List[Tensor]) -> Tensor:
+        '''Concatenates a batch of input.
+
+        Args:
+        batch: A list of framework-specific tensors
+
+        Returns: A framework-specific tensor concatenated by given input tensors.
+
+        Raises:
+        NotImplementedError: An error occurred when this method is not implemented
+            by subclasses.
+        '''
+        raise NotImplementedError
+
+    def __call__(self, batch: List[Input]) -> List[Output]:
+        batch_x = [self.preprocess(x) for x in batch]
+        batch_y = self.forward(self.concat(batch_x))
+        return [self.postprocess(y) for y in batch_y]
 
 
 

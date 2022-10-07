@@ -13,18 +13,24 @@ message ScaleRequest {
     int32 instances = 1;
 }
 
-message ScaleResponse {
-
-}
+message ScaleResponse {}
 
 message PredictRequest {
-    string type = 1;
-    map<string, string> metadata = 2;
-    bytes body = 3;
+    repeated Input batch = 1;
 }
 
 message PredictResponse {
+    repeated Output batch = 1;
+}
+
+message Input {
+    bytes body = 1;
+    map<string, string> meta = 2;
+}
+
+
+message Output {
     string type = 1;
-    map<string, string> metadata = 2;
-    bytes body = 3;
+    bytes body = 2;
+    map<string, string> meta = 3;
 }

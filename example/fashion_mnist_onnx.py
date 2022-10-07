@@ -1,7 +1,6 @@
 from moo.adaptor.onnx import Inference
 from moo.algorithm import softmax
-from moo.template import ImageInput, JsonOutput
-from PIL import Image
+from moo.template import Input, JsonOutput
 import numpy
 
 
@@ -12,7 +11,7 @@ labels = ("T-Shirt", "Trouser", "Pullover", "Dress", "Coat", "Sandal", "Shirt", 
 # inferencing lifecycle
 class FashionMNIST(Inference):
 
-    def preprocess(self, input: ImageInput):
+    def preprocess(self, input: Input):
         img = input.as_image()
         img = img.resize((28, 28)).convert('L')
         return numpy.array(img, dtype=numpy.float32).reshape(1, 28, 28)
@@ -28,9 +27,20 @@ class FashionMNIST(Inference):
 
 # invocation test
 if __name__ == '__main__':
-    # load the input image
-    img = Image.open('example/ankle-boot.jpg')
+    images = ['example/ankle-boot.jpg', 'example/t-shirt.jpg']
+
     # load the saved model 
-    f = FashionMNIST('example/fashion_mnist.onnx')
-    # invoke
-    print(f(img))
+    model = FashionMNIST('example/fashion_mnist.onnx')
+    batch_input = []
+
+    # load inputs
+    for p in images:
+        with open(p, 'rb') as f:
+            batch_input.append(Input(f.read()))
+
+    # call the model
+    batch_output = model(batch_input)
+
+    # print outputs
+    for y in batch_output:
+        print(y.encode())
