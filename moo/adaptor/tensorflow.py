@@ -1,8 +1,6 @@
-from typing import Dict, Union, Any
 from tensorflow import Tensor
 from keras.models import load_model
-from PIL.Image import Image
-from moo import BaseInference
+from moo import Input, Output, Inference as BaseInference
 
 
 class Inference(BaseInference):
@@ -16,8 +14,8 @@ class Inference(BaseInference):
     def forward(self, x: Tensor, **kargs) -> Tensor:
         return self.model(x)
 
-    def preprocess(self, input: Union[Image, str, bytearray]) -> Tensor:
+    def preprocess(self, input: Input) -> Tensor:
         raise NotImplementedError
 
-    def postprocess(self, output: Tensor) -> Union[str, Dict[str, Any]]:
+    def postprocess(self, output: Tensor) -> Output:
         raise NotImplementedError

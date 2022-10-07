@@ -1,1 +1,2 @@
-from .inference import BaseInference
+from .inference import *
+from .template import *

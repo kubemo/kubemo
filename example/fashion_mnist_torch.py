@@ -1,4 +1,5 @@
 from moo.adaptor.torch import Inference
+from moo.template import ImageInput, JsonOutput
 from PIL import Image
 from torchvision.transforms import Compose, PILToTensor, Grayscale, Resize, ConvertImageDtype
 from torch.nn import Linear, ReLU, Flatten, Softmax, Sequential, Module
@@ -41,15 +42,14 @@ labels = ("T-Shirt", "Trouser", "Pullover", "Dress", "Coat", "Sandal", "Shirt", 
 # inferencing lifecycle
 class FashionMNIST(Inference):
 
-    def preprocess(self, input):
-        if not isinstance(input, Image.Image):
-            raise TypeError('input is not a PIL.Image')
-        return compose(input)
+    def preprocess(self, input: ImageInput):
+        return compose(input.as_image())
 
-    def postprocess(self, y):
+    def postprocess(self, y) -> JsonOutput:
         y = Softmax(1)(y)[0]
         values, indices = y.topk(3)
-        return {labels[i]: v.item() for i, v in zip(indices, values)}
+        result = {labels[i]: v.item() for i, v in zip(indices, values)}
+        return JsonOutput(result)
 
 
 # invocation test

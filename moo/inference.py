@@ -1,9 +1,10 @@
 from typing import Any, Dict, Union, TypeVar
+from .template import Input, Output
 from PIL.Image import Image
 
 Tensor = TypeVar("Tensor")
 
-class BaseInference:
+class Inference:
     '''An interface abstracting the invocation lifecycle of any ML model.
 
     All the work in the future is made possible based on an assumption that the
@@ -60,7 +61,7 @@ class BaseInference:
             by subclasses.
         '''
 
-    def preprocess(self, input: Union[Image, str, bytearray]) -> Tensor:
+    def preprocess(self, input: Input) -> Tensor:
         '''Pre-processes an input.
 
         A union typed argument containing an input data is passed to this method
@@ -124,7 +125,11 @@ class BaseInference:
         raise NotImplementedError
 
 
-    def __call__(self, input: Union[Image, str, bytearray]) -> Union[str, Dict[str, Any]]:
+    def __call__(self, input: Input) -> Output:
         x = self.preprocess(input)
         y = self.forward(x)
         return self.postprocess(y)
+
+
+
+

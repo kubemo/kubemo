@@ -1,5 +1,6 @@
 from moo.adaptor.tensorflow import Inference
 from moo.algorithm import softmax
+from moo.template import ImageInput, DictOutput
 from PIL import Image
 import numpy
 
@@ -11,19 +12,17 @@ labels = ("T-Shirt", "Trouser", "Pullover", "Dress", "Coat", "Sandal", "Shirt", 
 # inferencing lifecycle
 class FashionMNIST(Inference):
 
-    def preprocess(self, img):
-        if not isinstance(img, Image.Image):
-            raise TypeError('input is not a PIL.Image')
-        
+    def preprocess(self, input: ImageInput) -> numpy.ndarray:
+        img = input.as_image()
         img = img.resize((28, 28)).convert('L')
         return numpy.array(img, dtype=numpy.float32).reshape(1, 28, 28) / 255.
 
 
-    def postprocess(self, y):
+    def postprocess(self, y) -> DictOutput:
         k = 3
         y =  softmax(y.numpy().flatten())
         topk = y.argsort()[-k:][::-1]
-        return {labels[i]: y[i] for i in topk}
+        return DictOutput({labels[i]: y[i] for i in topk})
 
 
 # invocation test

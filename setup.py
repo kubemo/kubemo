@@ -6,6 +6,9 @@ setup(
     author='Mivinci',
     description='ML model deployment made simple',
     packages=find_packages(),
-    install_requires=['Pillow'],
+    install_requires=[
+        'Pillow',
+        'numpy'
+    ],
     python_requires='>=3.7',
 )

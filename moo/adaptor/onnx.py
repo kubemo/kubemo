@@ -1,8 +1,6 @@
-from typing import Dict, Union, Any
-from onnxruntime import InferenceSession
 from numpy import ndarray
-from PIL.Image import Image
-from moo import BaseInference
+from moo import Input, Output, Inference as BaseInference
+from onnxruntime import InferenceSession
 
 
 class Inference(BaseInference):
@@ -17,9 +15,9 @@ class Inference(BaseInference):
         input_name = kargs.get('onnx_input_name') or 'x'
         return self.session.run(None, {input_name: x})
 
-    def preprocess(self, input: Union[Image, str, bytearray]) -> ndarray:
+    def preprocess(self, input: Input) -> ndarray:
         raise NotImplementedError
 
-    def postprocess(self, output: ndarray) -> Union[str, Dict[str, Any]]:
+    def postprocess(self, output: ndarray) -> Output:
         raise NotImplementedError
     

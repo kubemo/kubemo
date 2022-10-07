@@ -1,7 +1,6 @@
-from typing import Dict, Union, Any
+from moo.template import Input, Output
 from torch import load, Tensor
-from PIL.Image import Image
-from moo import BaseInference
+from moo import Inference as BaseInference
 
 
 
@@ -13,11 +12,11 @@ class Inference(BaseInference):
     def __del__(self) -> None:
         del self.model
 
-    def preprocess(self, input: Union[Image, str, bytearray]) -> Tensor:
+    def preprocess(self, input: Input) -> Tensor:
         raise NotImplementedError
 
     def forward(self, input: Tensor, **kargs) -> Tensor:
         return self.model(input)
 
-    def postprocess(self, output: Tensor) -> Union[str, Dict[str, Any]]:
+    def postprocess(self, output: Tensor) -> Output:
         raise NotImplementedError

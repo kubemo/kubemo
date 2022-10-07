@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package inference;
+
+option go_package = "./proto;proto";
+
+service Inference {
+    rpc Scale (ScaleRequest) returns (ScaleResponse);
+    rpc Predict (PredictRequest) returns (PredictResponse);
+}
+
+message ScaleRequest {
+    int32 instances = 1;
+}
+
+message ScaleResponse {
+
+}
+
+message PredictRequest {
+    string type = 1;
+    map<string, string> metadata = 2;
+    bytes body = 3;
+}
+
+message PredictResponse {
+    string type = 1;
+    map<string, string> metadata = 2;
+    bytes body = 3;
+}
