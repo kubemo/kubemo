@@ -28,10 +28,10 @@ class BaseInference:
     implemented. The model is just a blackbox to its users.
 
     Therefore, you need to define a class that inherits this class and implement
-    the five methods by embedding your code in it.
+    the five methods below by embedding your code in them.
     '''
 
-    def load(self, path: str) -> None:
+    def __init__(self, path: str) -> None:
         '''Loads the model from the given path into memory.
 
         To load the model into memory, this method must receive the path to your
@@ -48,12 +48,12 @@ class BaseInference:
         '''
         raise NotImplementedError
 
-    def unload(self) -> None:
+    def __del__(self) -> None:
         '''Drops the loaded model from memory.
 
-        By calling this method, the loaded model will be dropped from memory. So
-        you must manually free out the memories taken by your model for implementing
-        this method.
+        On deleting an Inference object, this method will be called and the loaded 
+        model need to be dropped from memory. So you must manually free out the
+        memories taken by your model for implementing this method.
 
         Raises:
         NotImplementedError: An error occurred when this method is not implemented
@@ -81,7 +81,7 @@ class BaseInference:
         '''
         raise NotImplementedError
 
-    def forward(self, input: Tensor) -> Tensor:
+    def forward(self, input: Tensor, **kargs) -> Tensor:
         '''Calls the model to make an inference.
 
         The tensor returned by method preprocess is passed to this method, in
@@ -91,6 +91,8 @@ class BaseInference:
 
         Args:
         input: A framework-specific tensor returned by method preprocess.
+        kargs: A dict containing some options like
+            onnx_input_name: A string specifying a ONNX input name
 
         Returns: A framework-specific tensor returned by your model.
 
@@ -122,7 +124,7 @@ class BaseInference:
         raise NotImplementedError
 
 
-    def __call__(self, input: Union[Image, str, bytearray]) -> Any:
+    def __call__(self, input: Union[Image, str, bytearray]) -> Union[str, Dict[str, Any]]:
         x = self.preprocess(input)
         y = self.forward(x)
         return self.postprocess(y)

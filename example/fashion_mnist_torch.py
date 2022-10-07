@@ -1,4 +1,4 @@
-from moo.adaptor import TorchInference
+from moo.adaptor.torch import Inference
 from PIL import Image
 from torchvision.transforms import Compose, PILToTensor, Grayscale, Resize, ConvertImageDtype
 from torch.nn import Linear, ReLU, Flatten, Softmax, Sequential, Module
@@ -39,15 +39,12 @@ labels = ("T-Shirt", "Trouser", "Pullover", "Dress", "Coat", "Sandal", "Shirt", 
 
 
 # inferencing lifecycle
-class FashionMNIST(TorchInference):
+class FashionMNIST(Inference):
 
     def preprocess(self, input):
         if not isinstance(input, Image.Image):
             raise TypeError('input is not a PIL.Image')
         return compose(input)
-
-    def forward(self, x):
-        return self.model(x)
 
     def postprocess(self, y):
         y = Softmax(1)(y)[0]
@@ -59,10 +56,8 @@ class FashionMNIST(TorchInference):
 if __name__ == '__main__':
     # load the input image
     img = Image.open('example/ankle-boot.jpg')
-    # instaniate 
-    f = FashionMNIST()
-    # load
-    f.load('example/fashion_mnist.pt')
+    # load the saved model 
+    f = FashionMNIST('example/fashion_mnist.pt')
     # invoke
     print(f(img))
     
