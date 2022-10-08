@@ -14,7 +14,7 @@ class Inference(BaseInference):
     
     def forward(self, x: ndarray, **kargs) -> ndarray:
         input_name = kargs.get('onnx_input_name') or 'x'
-        return self.session.run(None, {input_name: x})
+        return self.session.run(None, {input_name: x})[0]
 
     def preprocess(self, input: Input) -> ndarray:
         raise NotImplementedError

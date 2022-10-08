@@ -19,7 +19,7 @@ class FashionMNIST(Inference):
 
     def postprocess(self, y) -> JsonOutput:
         k = 3
-        y =  softmax(y[0].flatten())
+        y =  softmax(y)
         topk = y.argsort()[-k:][::-1]
         result = {labels[i]: y[i] for i in topk}
         return JsonOutput(result)

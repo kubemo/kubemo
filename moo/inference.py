@@ -1,6 +1,5 @@
-from typing import Any, Dict, List, Union, TypeVar
+from typing import List, TypeVar
 from .template import Input, Output
-from PIL.Image import Image
 
 Tensor = TypeVar("Tensor")
 
@@ -64,7 +63,7 @@ class Inference:
     def preprocess(self, input: Input) -> Tensor:
         '''Pre-processes an input.
 
-        A union typed argument containing an input data is passed to this method
+        A dynamic Input object containing an input data is passed to this method
         to be converted into a framework-specific tensor. You can somewhat normalize
         the input during processing to satisfy your model's input dimension. Then
         return the tensor that will then be passed to the next method named "forward".
@@ -85,9 +84,9 @@ class Inference:
     def forward(self, batch: Tensor, **kargs) -> Tensor:
         '''Calls the model to make an inference.
 
-        The tensor returned by method preprocess is passed to this method, in
-        which you make a inferencing call to your model and return the output
-        tensor that will be passed to next method named "postprocess".
+        The tensor returned by method preprocess is passed to this method, in which
+        you make a inferencing call to your model and return the output tensor that
+        will be passed to next method named "postprocess".
 
 
         Args:
@@ -103,7 +102,7 @@ class Inference:
         '''
         raise NotImplementedError
 
-    def postprocess(self, output: Tensor) -> Union[str, Dict[str, Any]]:
+    def postprocess(self, output: Tensor) -> Output:
         '''Post-processes an output.
 
         The output returned by method forward is passed to this method to be
