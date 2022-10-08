@@ -105,9 +105,9 @@ class Inference:
     def postprocess(self, output: Tensor) -> Output:
         '''Post-processes an output.
 
-        The output returned by method forward is passed to this method to be
-        converted into something that could be read and understood by human
-        beings, the very species of the end users :)
+        The output returned by method forward is passed to this method to be converted
+        into something that could be read and understood by human beings, the very 
+        species of the end users :)
 
         Args:
         output: A framework-specific tensor returned by your model.
@@ -125,7 +125,7 @@ class Inference:
 
 
     def concat(self, batch: List[Tensor]) -> Tensor:
-        '''Concatenates a batch of input.
+        '''Concatenates a batch of inputs.
 
         Args:
         batch: A list of framework-specific tensors

@@ -24,4 +24,3 @@ class Inference(BaseInference):
 
     def concat(self, batch: List[ndarray]) -> ndarray:
         return concatenate(batch)
-    
