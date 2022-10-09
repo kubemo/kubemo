@@ -19,65 +19,10 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='inference',
   syntax='proto3',
   serialized_options=_b('Z\r./proto;proto'),
-  serialized_pb=_b('\n\x0finference.proto\x12\tinference\"!\n\x0cScaleRequest\x12\x11\n\tinstances\x18\x01 \x01(\x05\"\x0f\n\rScaleResponse\"1\n\x0ePredictRequest\x12\x1f\n\x05\x62\x61tch\x18\x01 \x03(\x0b\x32\x10.inference.Input\"3\n\x0fPredictResponse\x12 \n\x05\x62\x61tch\x18\x01 \x03(\x0b\x32\x11.inference.Output\"l\n\x05Input\x12\x0c\n\x04\x62ody\x18\x01 \x01(\x0c\x12(\n\x04meta\x18\x02 \x03(\x0b\x32\x1a.inference.Input.MetaEntry\x1a+\n\tMetaEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"|\n\x06Output\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\x0c\n\x04\x62ody\x18\x02 \x01(\x0c\x12)\n\x04meta\x18\x03 \x03(\x0b\x32\x1b.inference.Output.MetaEntry\x1a+\n\tMetaEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\x32\x89\x01\n\tInference\x12:\n\x05Scale\x12\x17.inference.ScaleRequest\x1a\x18.inference.ScaleResponse\x12@\n\x07Predict\x12\x19.inference.PredictRequest\x1a\x1a.inference.PredictResponseB\x0fZ\r./proto;protob\x06proto3')
+  serialized_pb=_b('\n\x0finference.proto\x12\tinference\"?\n\x0ePredictRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x1f\n\x05\x62\x61tch\x18\x02 \x03(\x0b\x32\x10.inference.Input\"3\n\x0fPredictResponse\x12 \n\x05\x62\x61tch\x18\x01 \x03(\x0b\x32\x11.inference.Output\"\xc7\x01\n\x05Input\x12,\n\x06inputs\x18\x01 \x03(\x0b\x32\x1c.inference.Input.InputsEntry\x12\x30\n\x08metadata\x18\x02 \x03(\x0b\x32\x1e.inference.Input.MetadataEntry\x1a-\n\x0bInputsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x0c:\x02\x38\x01\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\x88\x01\n\x06Output\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\x0c\n\x04\x62ody\x18\x02 \x01(\x0c\x12\x31\n\x08metadata\x18\x03 \x03(\x0b\x32\x1f.inference.Output.MetadataEntry\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\x32M\n\tInference\x12@\n\x07Predict\x12\x19.inference.PredictRequest\x1a\x1a.inference.PredictResponseB\x0fZ\r./proto;protob\x06proto3')
 )
 
 
-
-
-_SCALEREQUEST = _descriptor.Descriptor(
-  name='ScaleRequest',
-  full_name='inference.ScaleRequest',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='instances', full_name='inference.ScaleRequest.instances', index=0,
-      number=1, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=30,
-  serialized_end=63,
-)
-
-
-_SCALERESPONSE = _descriptor.Descriptor(
-  name='ScaleResponse',
-  full_name='inference.ScaleResponse',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=65,
-  serialized_end=80,
-)
 
 
 _PREDICTREQUEST = _descriptor.Descriptor(
@@ -88,8 +33,15 @@ _PREDICTREQUEST = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='batch', full_name='inference.PredictRequest.batch', index=0,
-      number=1, type=11, cpp_type=10, label=3,
+      name='name', full_name='inference.PredictRequest.name', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='batch', full_name='inference.PredictRequest.batch', index=1,
+      number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -106,8 +58,8 @@ _PREDICTREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=82,
-  serialized_end=131,
+  serialized_start=30,
+  serialized_end=93,
 )
 
 
@@ -137,27 +89,64 @@ _PREDICTRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=133,
-  serialized_end=184,
+  serialized_start=95,
+  serialized_end=146,
 )
 
 
-_INPUT_METAENTRY = _descriptor.Descriptor(
-  name='MetaEntry',
-  full_name='inference.Input.MetaEntry',
+_INPUT_INPUTSENTRY = _descriptor.Descriptor(
+  name='InputsEntry',
+  full_name='inference.Input.InputsEntry',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='inference.Input.MetaEntry.key', index=0,
+      name='key', full_name='inference.Input.InputsEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='value', full_name='inference.Input.MetaEntry.value', index=1,
+      name='value', full_name='inference.Input.InputsEntry.value', index=1,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=_b('8\001'),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=254,
+  serialized_end=299,
+)
+
+_INPUT_METADATAENTRY = _descriptor.Descriptor(
+  name='MetadataEntry',
+  full_name='inference.Input.MetadataEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='inference.Input.MetadataEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='inference.Input.MetadataEntry.value', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -175,8 +164,8 @@ _INPUT_METAENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=251,
-  serialized_end=294,
+  serialized_start=301,
+  serialized_end=348,
 )
 
 _INPUT = _descriptor.Descriptor(
@@ -187,14 +176,14 @@ _INPUT = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='body', full_name='inference.Input.body', index=0,
-      number=1, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b(""),
+      name='inputs', full_name='inference.Input.inputs', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='meta', full_name='inference.Input.meta', index=1,
+      name='metadata', full_name='inference.Input.metadata', index=1,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -203,7 +192,7 @@ _INPUT = _descriptor.Descriptor(
   ],
   extensions=[
   ],
-  nested_types=[_INPUT_METAENTRY, ],
+  nested_types=[_INPUT_INPUTSENTRY, _INPUT_METADATAENTRY, ],
   enum_types=[
   ],
   serialized_options=None,
@@ -212,27 +201,27 @@ _INPUT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=186,
-  serialized_end=294,
+  serialized_start=149,
+  serialized_end=348,
 )
 
 
-_OUTPUT_METAENTRY = _descriptor.Descriptor(
-  name='MetaEntry',
-  full_name='inference.Output.MetaEntry',
+_OUTPUT_METADATAENTRY = _descriptor.Descriptor(
+  name='MetadataEntry',
+  full_name='inference.Output.MetadataEntry',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='inference.Output.MetaEntry.key', index=0,
+      name='key', full_name='inference.Output.MetadataEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='value', full_name='inference.Output.MetaEntry.value', index=1,
+      name='value', full_name='inference.Output.MetadataEntry.value', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -250,8 +239,8 @@ _OUTPUT_METAENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=251,
-  serialized_end=294,
+  serialized_start=301,
+  serialized_end=348,
 )
 
 _OUTPUT = _descriptor.Descriptor(
@@ -276,7 +265,7 @@ _OUTPUT = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='meta', full_name='inference.Output.meta', index=2,
+      name='metadata', full_name='inference.Output.metadata', index=2,
       number=3, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -285,7 +274,7 @@ _OUTPUT = _descriptor.Descriptor(
   ],
   extensions=[
   ],
-  nested_types=[_OUTPUT_METAENTRY, ],
+  nested_types=[_OUTPUT_METADATAENTRY, ],
   enum_types=[
   ],
   serialized_options=None,
@@ -294,37 +283,23 @@ _OUTPUT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=296,
-  serialized_end=420,
+  serialized_start=351,
+  serialized_end=487,
 )
 
 _PREDICTREQUEST.fields_by_name['batch'].message_type = _INPUT
 _PREDICTRESPONSE.fields_by_name['batch'].message_type = _OUTPUT
-_INPUT_METAENTRY.containing_type = _INPUT
-_INPUT.fields_by_name['meta'].message_type = _INPUT_METAENTRY
-_OUTPUT_METAENTRY.containing_type = _OUTPUT
-_OUTPUT.fields_by_name['meta'].message_type = _OUTPUT_METAENTRY
-DESCRIPTOR.message_types_by_name['ScaleRequest'] = _SCALEREQUEST
-DESCRIPTOR.message_types_by_name['ScaleResponse'] = _SCALERESPONSE
+_INPUT_INPUTSENTRY.containing_type = _INPUT
+_INPUT_METADATAENTRY.containing_type = _INPUT
+_INPUT.fields_by_name['inputs'].message_type = _INPUT_INPUTSENTRY
+_INPUT.fields_by_name['metadata'].message_type = _INPUT_METADATAENTRY
+_OUTPUT_METADATAENTRY.containing_type = _OUTPUT
+_OUTPUT.fields_by_name['metadata'].message_type = _OUTPUT_METADATAENTRY
 DESCRIPTOR.message_types_by_name['PredictRequest'] = _PREDICTREQUEST
 DESCRIPTOR.message_types_by_name['PredictResponse'] = _PREDICTRESPONSE
 DESCRIPTOR.message_types_by_name['Input'] = _INPUT
 DESCRIPTOR.message_types_by_name['Output'] = _OUTPUT
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
-
-ScaleRequest = _reflection.GeneratedProtocolMessageType('ScaleRequest', (_message.Message,), dict(
-  DESCRIPTOR = _SCALEREQUEST,
-  __module__ = 'inference_pb2'
-  # @@protoc_insertion_point(class_scope:inference.ScaleRequest)
-  ))
-_sym_db.RegisterMessage(ScaleRequest)
-
-ScaleResponse = _reflection.GeneratedProtocolMessageType('ScaleResponse', (_message.Message,), dict(
-  DESCRIPTOR = _SCALERESPONSE,
-  __module__ = 'inference_pb2'
-  # @@protoc_insertion_point(class_scope:inference.ScaleResponse)
-  ))
-_sym_db.RegisterMessage(ScaleResponse)
 
 PredictRequest = _reflection.GeneratedProtocolMessageType('PredictRequest', (_message.Message,), dict(
   DESCRIPTOR = _PREDICTREQUEST,
@@ -342,10 +317,17 @@ _sym_db.RegisterMessage(PredictResponse)
 
 Input = _reflection.GeneratedProtocolMessageType('Input', (_message.Message,), dict(
 
-  MetaEntry = _reflection.GeneratedProtocolMessageType('MetaEntry', (_message.Message,), dict(
-    DESCRIPTOR = _INPUT_METAENTRY,
+  InputsEntry = _reflection.GeneratedProtocolMessageType('InputsEntry', (_message.Message,), dict(
+    DESCRIPTOR = _INPUT_INPUTSENTRY,
     __module__ = 'inference_pb2'
-    # @@protoc_insertion_point(class_scope:inference.Input.MetaEntry)
+    # @@protoc_insertion_point(class_scope:inference.Input.InputsEntry)
+    ))
+  ,
+
+  MetadataEntry = _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), dict(
+    DESCRIPTOR = _INPUT_METADATAENTRY,
+    __module__ = 'inference_pb2'
+    # @@protoc_insertion_point(class_scope:inference.Input.MetadataEntry)
     ))
   ,
   DESCRIPTOR = _INPUT,
@@ -353,14 +335,15 @@ Input = _reflection.GeneratedProtocolMessageType('Input', (_message.Message,), d
   # @@protoc_insertion_point(class_scope:inference.Input)
   ))
 _sym_db.RegisterMessage(Input)
-_sym_db.RegisterMessage(Input.MetaEntry)
+_sym_db.RegisterMessage(Input.InputsEntry)
+_sym_db.RegisterMessage(Input.MetadataEntry)
 
 Output = _reflection.GeneratedProtocolMessageType('Output', (_message.Message,), dict(
 
-  MetaEntry = _reflection.GeneratedProtocolMessageType('MetaEntry', (_message.Message,), dict(
-    DESCRIPTOR = _OUTPUT_METAENTRY,
+  MetadataEntry = _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), dict(
+    DESCRIPTOR = _OUTPUT_METADATAENTRY,
     __module__ = 'inference_pb2'
-    # @@protoc_insertion_point(class_scope:inference.Output.MetaEntry)
+    # @@protoc_insertion_point(class_scope:inference.Output.MetadataEntry)
     ))
   ,
   DESCRIPTOR = _OUTPUT,
@@ -368,12 +351,13 @@ Output = _reflection.GeneratedProtocolMessageType('Output', (_message.Message,),
   # @@protoc_insertion_point(class_scope:inference.Output)
   ))
 _sym_db.RegisterMessage(Output)
-_sym_db.RegisterMessage(Output.MetaEntry)
+_sym_db.RegisterMessage(Output.MetadataEntry)
 
 
 DESCRIPTOR._options = None
-_INPUT_METAENTRY._options = None
-_OUTPUT_METAENTRY._options = None
+_INPUT_INPUTSENTRY._options = None
+_INPUT_METADATAENTRY._options = None
+_OUTPUT_METADATAENTRY._options = None
 
 _INFERENCE = _descriptor.ServiceDescriptor(
   name='Inference',
@@ -381,22 +365,13 @@ _INFERENCE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=423,
-  serialized_end=560,
+  serialized_start=489,
+  serialized_end=566,
   methods=[
-  _descriptor.MethodDescriptor(
-    name='Scale',
-    full_name='inference.Inference.Scale',
-    index=0,
-    containing_service=None,
-    input_type=_SCALEREQUEST,
-    output_type=_SCALERESPONSE,
-    serialized_options=None,
-  ),
   _descriptor.MethodDescriptor(
     name='Predict',
     full_name='inference.Inference.Predict',
-    index=1,
+    index=0,
     containing_service=None,
     input_type=_PREDICTREQUEST,
     output_type=_PREDICTRESPONSE,

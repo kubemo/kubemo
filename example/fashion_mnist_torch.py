@@ -1,8 +1,10 @@
+from typing import Tuple
 from moo.adaptor.torch import Inference
 from moo.template import Input, JsonOutput
 from torchvision.transforms import Compose, PILToTensor, Grayscale, Resize, ConvertImageDtype
 from torch.nn import Linear, ReLU, Flatten, Sequential, Module
 from torch.nn.functional import softmax
+from torch import Tensor
 
 import torch
 
@@ -42,11 +44,11 @@ labels = ("T-Shirt", "Trouser", "Pullover", "Dress", "Coat", "Sandal", "Shirt", 
 # inferencing lifecycle
 class FashionMNIST(Inference):
 
-    def preprocess(self, input: Input):
-        return compose(input.as_image())
+    def preprocess(self, inputs: Tuple[Input, ...]) -> Tuple[Tensor, ...]:
+        return compose(inputs[0].as_image()), 
 
-    def postprocess(self, y) -> JsonOutput:
-        y = softmax(y, 0)
+    def postprocess(self, outputs: Tuple[Tensor, ...]) -> JsonOutput:
+        y = softmax(outputs[0], 0)
         values, indices = y.topk(3)
         result = {labels[i]: v.item() for i, v in zip(indices, values)}
         return JsonOutput(result)
@@ -57,20 +59,25 @@ if __name__ == '__main__':
     images = ['example/ankle-boot.jpg', 'example/t-shirt.jpg']
 
     # load the saved model 
-    model = FashionMNIST('example/fashion_mnist.pt')
-    batch_input = []
+    model = FashionMNIST(
+        path='example/fashion_mnist.pt',
+        input_names=('x', ),
+        output_names=None,
+    )
 
     # load inputs
+    batch_input = []
     for p in images:
         with open(p, 'rb') as f:
-            batch_input.append(Input(f.read()))
+            inputs = (Input(f.read()), ) # single input
+            batch_input.append(inputs)
 
-    # call the model
-    batch_output = model(batch_input)
+    # call the model with a batch of inputs
+    batch_output = model(*batch_input)
 
     # print outputs
-    for y in batch_output:
-        print(y.encode())
+    for k, y in zip(images, batch_output):
+        print(f'{k} => {y}')
         
         
     

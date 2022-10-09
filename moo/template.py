@@ -60,6 +60,9 @@ class TextOutput(Output):
     def type(self) -> str:
         return 'text'
 
+    def __repr__(self) -> str:
+        return self.s
+
 
 class JsonOutput(Output):
 
@@ -72,6 +75,9 @@ class JsonOutput(Output):
     @property
     def type(self) -> str:
         return 'json'
+
+    def __repr__(self) -> str:
+        return self.d.__repr__()
 
 
 class ImageOutput(Output):
@@ -111,6 +117,9 @@ class ImageOutput(Output):
     @property
     def type(self) -> str:
         return 'image'
+
+    def __repr__(self) -> str:
+        return self.o.__repr__()
 
 
 class JsonEncoder(json.JSONEncoder):

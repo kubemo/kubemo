@@ -1,7 +1,7 @@
-from typing import List, TypeVar
+from typing import Tuple, Iterable
 from .template import Input, Output
 
-Tensor = TypeVar("Tensor")
+Tensor = Iterable
 
 class Inference:
     '''An interface abstracting the invocation lifecycle of any ML model.
@@ -31,7 +31,7 @@ class Inference:
     the five methods below by embedding your code in them.
     '''
 
-    def __init__(self, path: str) -> None:
+    def __init__(self, path: str, input_names: Tuple[str, ...], output_names: Tuple[str, ...]) -> None:
         '''Loads the model from the given path into memory.
 
         To load the model into memory, this method must receive the path to your
@@ -40,13 +40,14 @@ class Inference:
         if you don't have such a saved model.
 
         Args:
-        path: A string representing the path to a model.
-
-        Raises:
-        NotImplementedError: An error occurred when this method is not implemented
-            by subclasses.
+        path: A string representing the path to your model.
+        input_names: A tuple of strings each of which names an input of your model.
+        output_names: A tuple of strings each of which names an output of your model.
         '''
-        raise NotImplementedError
+        self.path = path
+        self.input_names = input_names
+        self.output_names = output_names
+       
 
     def __del__(self) -> None:
         '''Drops the loaded model from memory.
@@ -60,20 +61,20 @@ class Inference:
             by subclasses.
         '''
 
-    def preprocess(self, input: Input) -> Tensor:
+    def preprocess(self, inputs: Tuple[Input, ...]) -> Tuple[Tensor, ...]:
         '''Pre-processes an input.
 
-        A dynamic Input object containing an input data is passed to this method
-        to be converted into a framework-specific tensor. You can somewhat normalize
-        the input during processing to satisfy your model's input dimension. Then
-        return the tensor that will then be passed to the next method named "forward".
-        Note that what you do in this method is typically the same as that in your
-        training code.
+        A list of dynamic Input objects each of which contains a single input data 
+        is passed to this method to be converted into a framework-specific tensor. 
+        You can somewhat normalize the input during processing to satisfy your model's
+        input dimension. Then return the tensor that will then be passed to the next
+        method named "forward". Note that what you do in this method is typically 
+        the same as that in your training code.
 
         Args:
-        input: A bytesarray object containing the input data.
+        inputs: A tuple of dynamic Input objects each of which contains a single input data.
 
-        Returns: A framework-specific tensor object
+        Returns: A tuple of framework-specific tensors converted from inputs.
 
         Raises:
         NotImplementedError: An error occurred when this method is not implemented
@@ -81,7 +82,7 @@ class Inference:
         '''
         raise NotImplementedError
 
-    def forward(self, batch: Tensor, **kargs) -> Tensor:
+    def forward(self, inputs: Tuple[Tensor, ...]) -> Tuple[Tensor, ...]:
         '''Calls the model to make an inference.
 
         The tensor returned by method preprocess is passed to this method, in which
@@ -90,11 +91,9 @@ class Inference:
 
 
         Args:
-        input: A framework-specific tensor returned by method preprocess.
-        kargs: A dict containing some options like
-            onnx_input_name: A string specifying a ONNX input name
+        inputs: A tuple of framework-specific tensors returned by method preprocess.
 
-        Returns: A framework-specific tensor returned by your model.
+        Returns: A tuple of framework-specific tensor returned by your model.
 
         Raises:
         NotImplementedError: An error occurred when this method is not implemented
@@ -102,7 +101,7 @@ class Inference:
         '''
         raise NotImplementedError
 
-    def postprocess(self, output: Tensor) -> Output:
+    def postprocess(self, outputs: Tuple[Tensor, ...]) -> Output:
         '''Post-processes an output.
 
         The output returned by method forward is passed to this method to be converted
@@ -110,12 +109,9 @@ class Inference:
         species of the end users :)
 
         Args:
-        output: A framework-specific tensor returned by your model.
+        outputs: A tuple of framework-specific tensor returned by method forward.
 
-        Returns: It returns a string converted from the output tenser if your
-            model processes NLP tasks, otherwise a dict explaining each element
-            in the output tensor. Anyways, the returned data must be human-readable
-            other than raw numbers understood only by machines.
+        Returns: An Output object converted from outputs.
 
         Raises:
         NotImplementedError: An error occurred when this method is not implemented
@@ -124,13 +120,15 @@ class Inference:
         raise NotImplementedError
 
 
-    def concat(self, batch: List[Tensor]) -> Tensor:
+    def concat(self, batch: Tuple[Tuple[Tensor, ...], ...]) -> Tuple[Tensor, ...]:
         '''Concatenates a batch of inputs.
 
         Args:
-        batch: A list of framework-specific tensors
+        batch: A tuple of tuples each of which specifies a list of framework-specific 
+            tensor returned by method preprocess.
 
-        Returns: A framework-specific tensor concatenated by given input tensors.
+        Returns: A tuple of framework-specific tensors respectively concatenated by
+            the given batch
 
         Raises:
         NotImplementedError: An error occurred when this method is not implemented
@@ -138,11 +136,8 @@ class Inference:
         '''
         raise NotImplementedError
 
-    def __call__(self, batch: List[Input]) -> List[Output]:
-        batch_x = [self.preprocess(x) for x in batch]
+    def __call__(self, *args: Tuple[Input, ...]) -> Tuple[Output, ...]:
+        batch_x = tuple(self.preprocess(x) for x in args)
         batch_y = self.forward(self.concat(batch_x))
-        return [self.postprocess(y) for y in batch_y]
-
-
-
-
+        return tuple(self.postprocess(y) for y in zip(*batch_y))
+        

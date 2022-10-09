@@ -5,18 +5,12 @@ package inference;
 option go_package = "./proto;proto";
 
 service Inference {
-    rpc Scale (ScaleRequest) returns (ScaleResponse);
     rpc Predict (PredictRequest) returns (PredictResponse);
 }
 
-message ScaleRequest {
-    int32 instances = 1;
-}
-
-message ScaleResponse {}
-
 message PredictRequest {
-    repeated Input batch = 1;
+    string name = 1;
+    repeated Input batch = 2;
 }
 
 message PredictResponse {
@@ -24,13 +18,13 @@ message PredictResponse {
 }
 
 message Input {
-    bytes body = 1;
-    map<string, string> meta = 2;
+    map<string, bytes> inputs = 1;
+    map<string, string> metadata = 2;
 }
 
 
 message Output {
     string type = 1;
     bytes body = 2;
-    map<string, string> meta = 3;
+    map<string, string> metadata = 3;
 }

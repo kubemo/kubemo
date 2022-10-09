@@ -8,6 +8,7 @@ from .inference import Inference
 from .template import Input
 
 
+# todo: remove
 class Server:
     '''An interface abstracting a server to serve an Inference object.
     '''

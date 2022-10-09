@@ -1,4 +1,4 @@
-from typing import List
+from typing import Tuple
 from tensorflow import Tensor, concat
 from keras.models import load_model
 from moo import Input, Output, Inference as BaseInference
@@ -6,20 +6,22 @@ from moo import Input, Output, Inference as BaseInference
 
 class Inference(BaseInference):
 
-    def __init__(self, path: str) -> None:
+    def __init__(self, path: str, input_names: Tuple[str, ...], output_names: Tuple[str, ...]) -> None:
+        super().__init__(path, input_names, output_names)
         self.model = load_model(path)
 
     def __del__(self) -> None:
         del self.model
 
-    def forward(self, x: Tensor, **kargs) -> Tensor:
-        return self.model(x)
+    def forward(self, inputs: Tuple[Tensor, ...]) -> Tuple[Tensor, ...]:
+        y = self.model(*inputs)
+        return y if isinstance(y, tuple) else y, 
 
-    def preprocess(self, input: Input) -> Tensor:
+    def preprocess(self, inputs: Tuple[Input, ...]) -> Tuple[Tensor, ...]:
         raise NotImplementedError
 
-    def postprocess(self, output: Tensor) -> Output:
+    def postprocess(self, outputs: Tuple[Tensor, ...]) -> Output:
         raise NotImplementedError
 
-    def concat(self, batch: List[Tensor]) -> Tensor:
-        return concat(batch, axis=0)
+    def concat(self, batch: Tuple[Tuple[Tensor, ...], ...]) -> Tuple[Tensor, ...]:
+        return tuple(concat(x, axis=0) for x in zip(*batch))

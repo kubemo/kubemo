@@ -22,7 +22,6 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type InferenceClient interface {
-	Scale(ctx context.Context, in *ScaleRequest, opts ...grpc.CallOption) (*ScaleResponse, error)
 	Predict(ctx context.Context, in *PredictRequest, opts ...grpc.CallOption) (*PredictResponse, error)
 }
 
@@ -32,15 +31,6 @@ type inferenceClient struct {
 
 func NewInferenceClient(cc grpc.ClientConnInterface) InferenceClient {
 	return &inferenceClient{cc}
-}
-
-func (c *inferenceClient) Scale(ctx context.Context, in *ScaleRequest, opts ...grpc.CallOption) (*ScaleResponse, error) {
-	out := new(ScaleResponse)
-	err := c.cc.Invoke(ctx, "/inference.Inference/Scale", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *inferenceClient) Predict(ctx context.Context, in *PredictRequest, opts ...grpc.CallOption) (*PredictResponse, error) {
@@ -56,7 +46,6 @@ func (c *inferenceClient) Predict(ctx context.Context, in *PredictRequest, opts 
 // All implementations must embed UnimplementedInferenceServer
 // for forward compatibility
 type InferenceServer interface {
-	Scale(context.Context, *ScaleRequest) (*ScaleResponse, error)
 	Predict(context.Context, *PredictRequest) (*PredictResponse, error)
 	mustEmbedUnimplementedInferenceServer()
 }
@@ -65,9 +54,6 @@ type InferenceServer interface {
 type UnimplementedInferenceServer struct {
 }
 
-func (UnimplementedInferenceServer) Scale(context.Context, *ScaleRequest) (*ScaleResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Scale not implemented")
-}
 func (UnimplementedInferenceServer) Predict(context.Context, *PredictRequest) (*PredictResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Predict not implemented")
 }
@@ -82,24 +68,6 @@ type UnsafeInferenceServer interface {
 
 func RegisterInferenceServer(s grpc.ServiceRegistrar, srv InferenceServer) {
 	s.RegisterService(&Inference_ServiceDesc, srv)
-}
-
-func _Inference_Scale_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ScaleRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(InferenceServer).Scale(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/inference.Inference/Scale",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InferenceServer).Scale(ctx, req.(*ScaleRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _Inference_Predict_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -127,10 +95,6 @@ var Inference_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "inference.Inference",
 	HandlerType: (*InferenceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "Scale",
-			Handler:    _Inference_Scale_Handler,
-		},
 		{
 			MethodName: "Predict",
 			Handler:    _Inference_Predict_Handler,
