@@ -47,15 +47,17 @@ class FashionMNIST(Inference):
     def preprocess(self, inputs: Tuple[Input, ...]) -> Tuple[Tensor, ...]:
         return compose(inputs[0].as_image()), 
 
-    def postprocess(self, outputs: Tuple[Tensor, ...]) -> JsonOutput:
+    def postprocess(self, outputs: Tuple[Tensor, ...]) -> Tuple[JsonOutput,]:
         y = softmax(outputs[0], 0)
         values, indices = y.topk(3)
         result = {labels[i]: v.item() for i, v in zip(indices, values)}
-        return JsonOutput(result)
+        return JsonOutput(result),
 
 
 # invocation test
 if __name__ == '__main__':
+    from moo import IMAGE
+
     images = ['example/ankle-boot.jpg', 'example/t-shirt.jpg']
 
     # load the saved model 
@@ -68,16 +70,15 @@ if __name__ == '__main__':
     # load inputs
     batch_input = []
     for p in images:
-        with open(p, 'rb') as f:
-            inputs = (Input(f.read()), ) # single input
-            batch_input.append(inputs)
+        inputs = (Input(IMAGE, open(p, 'rb')), ) # single input
+        batch_input.append(inputs)
 
     # call the model with a batch of inputs
     batch_output = model(*batch_input)
 
     # print outputs
     for k, y in zip(images, batch_output):
-        print(f'{k} => {y}')
+        print(f'{k} => {y[0]}')
         
         
     

@@ -1,6 +1,7 @@
-from typing import Union, Dict, List
+from typing import Union, Dict, List, BinaryIO
 from io import BytesIO
 from PIL import Image
+from .protocol import INFERENCE_IMAGE, INFERENCE_TEXT, INFERENCE_JSON
 
 import json
 import numpy
@@ -8,18 +9,24 @@ import numpy
 
 class Input:
 
-    def __init__(self, raw: bytes) -> None:
+    def __init__(self, kind: int, reader: BinaryIO) -> None:
         '''A dynamic input
 
         Args:
-        raw: Bytes containing input data.
+        kind: An integer specifying input type.
+        reader: A BineryIO for reading the input data.
+
+        Example:
+
+        >>> from moo import IMAGE, Input
+        >>>
+        >>> x = Input(IMAGE, open('foo.jpg', 'rb'))
+        >>> img = x.as_image()
+        >>> img.show()
         '''
-        self.raw = raw
+        self.kind = kind
+        self.reader = reader
 
-
-    @property
-    def type(self) -> str:
-        return 'dynamic'
 
     def as_image(self) -> Image:
         '''
@@ -27,7 +34,7 @@ class Input:
 
         Raises: exceptions occur if the underlying input data is not an image.
         '''
-        return Image.open(BytesIO(self.raw))
+        return Image.open(self.reader)
 
     def as_str(self) -> str:
         '''
@@ -35,13 +42,13 @@ class Input:
 
         Raises: exceptions occur if the underlying input data is not a string.
         '''
-        return self.raw.decode()
+        return self.reader.read().decode()
 
 
 class Output:
 
     @property
-    def type(self) -> str:
+    def kind(self) -> int:
         raise NotImplementedError
 
     def encode(self) -> bytes:
@@ -57,8 +64,8 @@ class TextOutput(Output):
         return self.s.encode()
 
     @property
-    def type(self) -> str:
-        return 'text'
+    def kind(self) -> int:
+        return INFERENCE_TEXT
 
     def __repr__(self) -> str:
         return self.s
@@ -73,8 +80,8 @@ class JsonOutput(Output):
         return json.dumps(self.d, cls=JsonEncoder).encode()
 
     @property
-    def type(self) -> str:
-        return 'json'
+    def kind(self) -> int:
+        return INFERENCE_JSON
 
     def __repr__(self) -> str:
         return self.d.__repr__()
@@ -115,8 +122,8 @@ class ImageOutput(Output):
             raise TypeError(f'invalid image output content: {type(self.o)}')
     
     @property
-    def type(self) -> str:
-        return 'image'
+    def kind(self) -> int:
+        return INFERENCE_IMAGE
 
     def __repr__(self) -> str:
         return self.o.__repr__()
@@ -135,3 +142,28 @@ class JsonEncoder(json.JSONEncoder):
         if isinstance(o, numpy.ndarray):
             return o.tolist()
         return json.JSONEncoder.default(self, o)
+
+
+class DynamicOutput(Output):
+
+    def __init__(self, kind: int, reader: BinaryIO) -> None:
+        self.kind = kind
+        self.reader = reader
+
+    def encode(self) -> bytes:
+        return self.reader.read()
+
+    def text(self) -> str:
+        if self.kind != INFERENCE_JSON:
+            raise TypeError('output connot be decoded as a string')
+        return self.reader.read().decode()
+
+    def json(self) -> object:
+        if self.kind != INFERENCE_JSON:
+            raise TypeError('output connot be decoded as JSON')
+        return json.load(self.reader)
+    
+    def image(self) -> Image.Image:
+        if self.kind != INFERENCE_IMAGE:
+            raise TypeError('output connot be decoded as a PIL image ')
+        return Image.open(self.reader)

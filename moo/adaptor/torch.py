@@ -20,7 +20,7 @@ class Inference(BaseInference):
         y = self.model(*inputs)
         return y if isinstance(y, tuple) else y,
 
-    def postprocess(self, outputs: Tuple[Tensor, ...]) -> Output:
+    def postprocess(self, outputs: Tuple[Tensor, ...]) -> Tuple[Output, ...]:
         raise NotImplementedError
 
     def concat(self, batch: Tuple[Tuple[Tensor, ...], ...]) -> Tuple[Tensor, ...]:

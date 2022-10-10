@@ -101,7 +101,7 @@ class Inference:
         '''
         raise NotImplementedError
 
-    def postprocess(self, outputs: Tuple[Tensor, ...]) -> Output:
+    def postprocess(self, outputs: Tuple[Tensor, ...]) -> Tuple[Output, ...]:
         '''Post-processes an output.
 
         The output returned by method forward is passed to this method to be converted
@@ -111,7 +111,7 @@ class Inference:
         Args:
         outputs: A tuple of framework-specific tensor returned by method forward.
 
-        Returns: An Output object converted from outputs.
+        Returns: A tuple of Output objects converted from outputs.
 
         Raises:
         NotImplementedError: An error occurred when this method is not implemented
@@ -136,7 +136,7 @@ class Inference:
         '''
         raise NotImplementedError
 
-    def __call__(self, *args: Tuple[Input, ...]) -> Tuple[Output, ...]:
+    def __call__(self, *args: Tuple[Input, ...]) -> Tuple[Tuple[Output, ...], ...]:
         batch_x = tuple(self.preprocess(x) for x in args)
         batch_y = self.forward(self.concat(batch_x))
         return tuple(self.postprocess(y) for y in zip(*batch_y))

@@ -42,48 +42,13 @@
 #             ctx.abort(StatusCode.INTERNAL, str(e))
 
 
-'''
-        Model Invocation Protocol
-
-0         7         15        23         31
-+---------+----------+---------+----------+       ---
-| version |   kind   | subtype | reserved |        ^      
-+---------+---------+---------+-----------+   fixed header 
-|             remaining size              |        v
-+---------+----------+--------------------+       ---
-| n-input | n-output |     batch size     |        ^
-+---------+----------+--------------------+        |
-|                  ...                    |        |
-+-----------------------------------------+        |
-|            input/output size            |  variable payload (on *kind* == 1)
-+-----------------------------------------+        |
-|            input/output data            |        |
-+-----------------------------------------+        |
-|                  ...                    |        v
-+-----------------------------------------+       ---
-
-MIP, aka model invocation protocol, is used for ML model invocation. The first
-8 octets form the fixed-length header which includes:
-**version**        specifies MIP version to use.
-**kind**           specifies message type (for multi-endpoint invocation)
-**subtype**        specifies request, response or a concrete error type.
-**reserved**       reserved for later usage.
-**remaining size** specifies how many bytes of payload to read.
-
-When *kind* equals to 1, which indicates an Inferencing call, the following 4
-octets are required to include:
-**n-input**    specifies the number of the model's inputs.
-**n-output**   specifies the number of the model's outputs.
-**batch size** specifies the batch size of the following input/output.
-
-The rest of the message uses a *size-value* format to curry a batch of input
-or output.
-'''
-
-from typing import Callable, Tuple, Dict, Union
+from typing import Tuple, Dict, Union, BinaryIO
 from socket import AF_INET, AF_UNIX, SOCK_STREAM, socket
+from io import BytesIO
 from .inference import Inference
 from .template import Input, Output
+from .errors import BatchShapeError
+from .sock import Sock
 from .protocol import *
 
 import struct
@@ -91,13 +56,22 @@ import logging
 import os
 
 
-Handler = Callable[[socket], bytes]
+class Handler:
+
+    def handle(self, conn: Sock) -> bytes:
+        raise NotImplementedError
+
+    def kind(self) -> int:
+        raise NotImplementedError
 
 
 class PingHandler(Handler):
 
-    def __call__(self, conn: socket) -> bytes:
-        return bytes()
+    def handle(self, conn: Sock) -> bytes:
+        return b''
+
+    def kind(self) -> int:
+        return MESSAGE_PING
 
 
 class InferenceHandler(Handler):
@@ -105,23 +79,34 @@ class InferenceHandler(Handler):
     def __init__(self, model: Inference) -> None:
         self.model = model
 
-    def __call__(self, conn: socket) -> bytes:
-        header = conn.recv(4)
-        n_input, n_output, batch_size = struct.unpack('!2BH', header)
-        batch_input = tuple(tuple(Input(self.__decode_single_input(conn)) for _ in range(n_input)) for _ in range(batch_size))
+    def handle(self, conn: Sock) -> bytes:
+        request_header = conn.read(4)
+        n_input, _, batch_size = struct.unpack(INFERENCE_HEADER_FMT, request_header)
+        batch_input = tuple(tuple(Input(*self.__decode_single_input(conn)) for _ in range(n_input)) for _ in range(batch_size))
         batch_output = self.model(*batch_input)
-        return header + bytes(self.__encode_single_output(output) for output in batch_output)
+
+        n_output = len(batch_input[0])
+        for outputs in batch_output[1:]:
+            if n_output != len(outputs):
+                raise BatchShapeError
+        
+        batch_size = len(batch_output)
+        response_header = struct.pack(INFERENCE_HEADER_FMT, n_input, n_output, batch_size)
+        return response_header + bytes(bytes(self.__encode_single_output(output) for output in outputs) for outputs in batch_output)
 
 
-    def __decode_single_input(self, conn: socket) -> bytes:
-        input_size, = struct.unpack('!L', conn.recv(4))
-        return conn.recv(input_size)
+    def __decode_single_input(self, conn: Sock) -> Tuple[int, BinaryIO]:
+        input_type, input_size = struct.unpack('!2L', conn.read(8))
+        return input_type, BytesIO(conn.read(input_size))
                 
     def __encode_single_output(self, output: Output) -> bytes:
+        output_type = output.kind
         output_data = output.encode()
-        output_size = struct.pack('!L', len(output_data))
-        return output_size + output_data
+        output_tl = struct.pack('!2L', output_type, len(output_data))
+        return output_tl + output_data
 
+    def kind(self) -> int:
+        return MESSAGE_INFERENCE
 
 
 class Server:
@@ -149,7 +134,7 @@ class Server:
 
         self.handlers: Dict[int, Handler] = {}
         if register_ping_handler:
-            self.handle(MESSAGE_PING, PingHandler())
+            self.handle(PingHandler())
 
 
     def __enter__(self):
@@ -164,8 +149,8 @@ class Server:
             os.remove(self.address)
 
 
-    def handle(self, kind: int, handler: Handler) -> None:
-        self.handlers[kind] = handler
+    def handle(self, handler: Handler) -> None:
+        self.handlers[handler.kind()] = handler
     
 
     def serve(self) -> None:
@@ -175,40 +160,47 @@ class Server:
 
             with conn:
                 logging.info(f'accepted connection from: {addr}')
-                self.dispatch(conn)
+                self.dispatch(Sock(conn))
 
 
-    def dispatch(self, conn: socket) -> None:
-        fixed_header = conn.recv(FIXED_HEADER_LEN)
-        version, kind, subtype, reserved, remaining = struct.unpack(FIXED_HEADER_FMT, fixed_header)
-
-        if version != PROTOCOL_VERSION:
-            return self.__respond_with_error(conn, ERROR_PROTOCOL)
-
-        if subtype != MESSAGE_REQUEST:
-            return self.__respond_with_error(conn, ERROR_SUBTYPE)
-
-        if kind not in self.handlers:
-            return self.__respond_with_error(conn, ERROR_METHOD)
-
+    def dispatch(self, conn: Sock) -> None:
         try:
-            response = self.handlers[kind](conn)
+            fixed_header = conn.read(FIXED_HEADER_LEN)
+            version, kind, subtype, _, _ = struct.unpack(FIXED_HEADER_FMT, fixed_header)
+
+            if version != PROTOCOL_VERSION:
+                return self.__respond_with_error(conn, ERROR_PROTOCOL)
+
+            if subtype != MESSAGE_REQUEST:
+                return self.__respond_with_error(conn, ERROR_SUBTYPE)
+
+            if kind not in self.handlers:
+                return self.__respond_with_error(conn, ERROR_METHOD)
+
+            response = self.handlers[kind].handle(conn)
             return self.__respond(conn, kind, response)
+            
+        except ConnectionError:
+            logging.warn('client disconnected')
+            return
         except MemoryError:
             return self.__respond_with_error(conn, ERROR_MEMORY)
+        except BatchShapeError:
+            return self.__respond_with_error(conn, ERROR_SHAPE)
         except Exception as e:
             logging.error('error handing request: %s', e)
             return self.__respond_with_error(conn, ERROR_INTERNAL)
 
     
-    def __respond_with_error(self, conn: socket, status: int) -> None:
+    def __respond_with_error(self, conn: Sock, status: int) -> None:
         fixed_header = struct.pack(FIXED_HEADER_FMT, PROTOCOL_VERSION, MESSAGE_ERROR, status, 0, RESERVED_BYTE)
-        return conn.sendall(fixed_header)
+        return conn.write(fixed_header)
 
 
-    def __respond(self, conn: socket, kind: int, b: bytes) -> None:
+    def __respond(self, conn: Sock, kind: int, b: bytes) -> None:
         fixed_header = struct.pack(FIXED_HEADER_FMT, PROTOCOL_VERSION, kind, MESSAGE_RESPONSE, len(b), RESERVED_BYTE)
-        return conn.sendall(fixed_header + b)
+        return conn.write(fixed_header + b)
 
 
     
+

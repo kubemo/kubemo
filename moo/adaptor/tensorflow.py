@@ -20,7 +20,7 @@ class Inference(BaseInference):
     def preprocess(self, inputs: Tuple[Input, ...]) -> Tuple[Tensor, ...]:
         raise NotImplementedError
 
-    def postprocess(self, outputs: Tuple[Tensor, ...]) -> Output:
+    def postprocess(self, outputs: Tuple[Tensor, ...]) -> Tuple[Output, ...]:
         raise NotImplementedError
 
     def concat(self, batch: Tuple[Tuple[Tensor, ...], ...]) -> Tuple[Tensor, ...]:

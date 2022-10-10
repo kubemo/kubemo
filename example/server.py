@@ -7,17 +7,35 @@
 #     server = Server(model)
 #     server.run(address)
 
-from moo.server import Server
+from moo.server import Server, InferenceHandler
+from fashion_mnist_onnx import FashionMNIST
 
+import logging
 
 if __name__ == '__main__':
+    # init logger using base config
+    logging.basicConfig()
 
+    # load the saved model 
+    model = FashionMNIST(
+        path='example/fashion_mnist.onnx',
+        input_names=('x', ),
+        output_names=None,
+    )
+
+    network = 'tcp'
     address = ('127.0.0.1', 50051)
-    with Server('tcp', address) as server:
+
+    # create a server and register an inference handler
+    with Server(network, address) as server:
+
+        server.handle(InferenceHandler(model))
+
         try:
+            logging.info(f'server listening at {network}://{address}')
             server.serve()
         except KeyboardInterrupt:
-            pass
+            logging.info('server stopped')
 
     
 
