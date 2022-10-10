@@ -1,6 +1,6 @@
 from typing import Tuple
 from numpy import ndarray, concatenate
-from moo import Input, Output, Inference as BaseInference
+from kubemo import Input, Output, Inference as BaseInference
 from onnxruntime import InferenceSession
 
 

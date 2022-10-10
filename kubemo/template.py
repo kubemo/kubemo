@@ -18,7 +18,7 @@ class Input:
 
         Example:
 
-        >>> from moo import IMAGE, Input
+        >>> from kubemo import IMAGE, Input
         >>>
         >>> x = Input(IMAGE, open('foo.jpg', 'rb'))
         >>> img = x.as_image()

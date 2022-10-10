@@ -48,7 +48,7 @@ from io import BytesIO
 from .inference import Inference
 from .template import Input, Output
 from .errors import BatchShapeError
-from .sock import Sock
+from .socket import Socket
 from .protocol import *
 
 import struct
@@ -58,7 +58,7 @@ import os
 
 class Handler:
 
-    def handle(self, conn: Sock) -> bytes:
+    def handle(self, conn: Socket) -> bytes:
         raise NotImplementedError
 
     def kind(self) -> int:
@@ -67,7 +67,7 @@ class Handler:
 
 class PingHandler(Handler):
 
-    def handle(self, conn: Sock) -> bytes:
+    def handle(self, conn: Socket) -> bytes:
         return b''
 
     def kind(self) -> int:
@@ -79,7 +79,7 @@ class InferenceHandler(Handler):
     def __init__(self, model: Inference) -> None:
         self.model = model
 
-    def handle(self, conn: Sock) -> bytes:
+    def handle(self, conn: Socket) -> bytes:
         request_header = conn.read(4)
         n_input, _, batch_size = struct.unpack(INFERENCE_HEADER_FMT, request_header)
         batch_input = tuple(tuple(Input(*self.__decode_single_input(conn)) for _ in range(n_input)) for _ in range(batch_size))
@@ -95,7 +95,7 @@ class InferenceHandler(Handler):
         return response_header + bytes(bytes(self.__encode_single_output(output) for output in outputs) for outputs in batch_output)
 
 
-    def __decode_single_input(self, conn: Sock) -> Tuple[int, BinaryIO]:
+    def __decode_single_input(self, conn: Socket) -> Tuple[int, BinaryIO]:
         input_type, input_size = struct.unpack('!2L', conn.read(8))
         return input_type, BytesIO(conn.read(input_size))
                 
@@ -160,10 +160,10 @@ class Server:
 
             with conn:
                 logging.info(f'accepted connection from: {addr}')
-                self.dispatch(Sock(conn))
+                self.dispatch(Socket(conn))
 
 
-    def dispatch(self, conn: Sock) -> None:
+    def dispatch(self, conn: Socket) -> None:
         try:
             fixed_header = conn.read(FIXED_HEADER_LEN)
             version, kind, subtype, _, _ = struct.unpack(FIXED_HEADER_FMT, fixed_header)
@@ -192,12 +192,12 @@ class Server:
             return self.__respond_with_error(conn, ERROR_INTERNAL)
 
     
-    def __respond_with_error(self, conn: Sock, status: int) -> None:
+    def __respond_with_error(self, conn: Socket, status: int) -> None:
         fixed_header = struct.pack(FIXED_HEADER_FMT, PROTOCOL_VERSION, MESSAGE_ERROR, status, 0, RESERVED_BYTE)
         return conn.write(fixed_header)
 
 
-    def __respond(self, conn: Sock, kind: int, b: bytes) -> None:
+    def __respond(self, conn: Socket, kind: int, b: bytes) -> None:
         fixed_header = struct.pack(FIXED_HEADER_FMT, PROTOCOL_VERSION, kind, MESSAGE_RESPONSE, len(b), RESERVED_BYTE)
         return conn.write(fixed_header + b)
 

@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='moo',
+    name='kubemo',
     version='0.0.1',
     author='Mivinci',
     description='ML model deployment made simple',
@@ -9,7 +9,6 @@ setup(
     install_requires=[
         'Pillow',
         'numpy',
-        'grpcio',
     ],
     python_requires='>=3.7',
 )

@@ -1,7 +1,8 @@
 from typing import Union
 from socket import socket
 
-class Sock:
+
+class Socket:
 
     def __init__(self, sock: socket) -> None:
         self.sock = sock

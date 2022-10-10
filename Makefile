@@ -1,5 +1,5 @@
 PROTO_PATH=proto
-PROTO_OUT_PYTHON=moo/proto
+PROTO_OUT_PYTHON=kubemo/proto
 
 .PHONY: proto-py
 proto-py:

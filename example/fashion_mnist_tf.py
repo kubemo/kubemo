@@ -1,7 +1,7 @@
 from typing import Tuple
-from moo.adaptor.tensorflow import Inference
-from moo.algorithm import softmax
-from moo.template import Input, JsonOutput
+from kubemo.adaptor.tensorflow import Inference
+from kubemo.algorithm import softmax
+from kubemo.template import Input, JsonOutput
 from tensorflow import Tensor, convert_to_tensor
 
 import numpy
@@ -31,7 +31,7 @@ class FashionMNIST(Inference):
 
 # invocation test
 if __name__ == '__main__':
-    from moo import IMAGE
+    from kubemo import IMAGE
 
     images = ['example/ankle-boot.jpg', 'example/t-shirt.jpg']
 

@@ -1,6 +1,6 @@
 from typing import Tuple
-from moo.adaptor.torch import Inference
-from moo.template import Input, JsonOutput
+from kubemo.adaptor.torch import Inference
+from kubemo.template import Input, JsonOutput
 from torchvision.transforms import Compose, PILToTensor, Grayscale, Resize, ConvertImageDtype
 from torch.nn import Linear, ReLU, Flatten, Sequential, Module
 from torch.nn.functional import softmax
@@ -56,7 +56,7 @@ class FashionMNIST(Inference):
 
 # invocation test
 if __name__ == '__main__':
-    from moo import IMAGE
+    from kubemo import IMAGE
 
     images = ['example/ankle-boot.jpg', 'example/t-shirt.jpg']
 

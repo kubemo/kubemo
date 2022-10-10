@@ -2,7 +2,7 @@ from typing import BinaryIO, Tuple, Union, Optional
 from socket import AF_INET, AF_UNIX, SOCK_STREAM, socket
 from time import time_ns
 from io import BytesIO
-from .sock import Sock
+from .socket import Socket
 from .errors import BatchShapeError, MessageError, ProtocolVersionError, InvocationError
 from .template import Input, DynamicOutput
 from .protocol import *
@@ -27,7 +27,7 @@ class Connection:
 
         sock = socket(af, sk)
         sock.connect(self.address)
-        self.socket = Sock(sock)
+        self.socket = Socket(sock)
 
 
     def __enter__(self):

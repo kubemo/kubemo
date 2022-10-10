@@ -1,5 +1,5 @@
 # from fashion_mnist_onnx import FashionMNIST
-# from moo.server import Server
+# from kubemo.server import Server
 
 # if __name__ == '__main__':
 #     address = '[::]:50051'
@@ -7,7 +7,7 @@
 #     server = Server(model)
 #     server.run(address)
 
-from moo.server import Server, InferenceHandler
+from kubemo.server import Server, InferenceHandler
 from fashion_mnist_onnx import FashionMNIST
 
 import logging
