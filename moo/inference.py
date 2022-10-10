@@ -140,4 +140,3 @@ class Inference:
         batch_x = tuple(self.preprocess(x) for x in args)
         batch_y = self.forward(self.concat(batch_x))
         return tuple(self.postprocess(y) for y in zip(*batch_y))
-        

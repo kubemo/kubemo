@@ -1,8 +1,7 @@
 from typing import Tuple
-from moo.template import Input, Output
 from torch import load, Tensor, cat
 from moo import Inference as BaseInference
-
+from moo.template import Input, Output
 
 
 class Inference(BaseInference):
