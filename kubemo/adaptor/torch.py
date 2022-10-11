@@ -1,7 +1,7 @@
 from typing import Tuple
 from torch import load, Tensor, cat
 from kubemo import Inference as BaseInference
-from kubemo.template import Input, Output
+from kubemo.serialize import Input, Output
 
 
 class Inference(BaseInference):

@@ -1,16 +1,13 @@
-from kubemo.client import Client
-from kubemo import Input, IMAGE
+from kubemo import Image, Client
 
 network = 'unix'
 address = 'test/kubemo.sock'
 
-images = []
-
 with Client() as client:
     with client.connect(network, address) as conn:
         batch_input = (
-            (Input(IMAGE, open('example/t-shirt.jpg', 'rb')), ),
-            (Input(IMAGE, open('example/ankle-boot.jpg', 'rb')), ),
+            (Image('example/t-shirt.jpg'), ),
+            (Image('example/ankle-boot.jpg'), ),
         )
         batch_output = conn.inference(batch_input)
         for outputs in batch_output:

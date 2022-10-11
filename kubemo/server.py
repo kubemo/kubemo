@@ -2,7 +2,7 @@ from typing import Tuple, Dict, Union, BinaryIO
 from socket import AF_INET, AF_UNIX, SOCK_STREAM, socket
 from io import BytesIO
 from .inference import Inference
-from .template import Input, Output
+from .serialize import Input, Output
 from .errors import BatchShapeError
 from .socket import Socket
 from .protocol import *

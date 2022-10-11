@@ -1,4 +1,4 @@
-from kubemo.server import Server, InferenceHandler
+from kubemo import Server, InferenceHandler
 from fashion_mnist_onnx import FashionMNIST
 
 import logging

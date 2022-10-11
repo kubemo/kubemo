@@ -1,5 +1,5 @@
 from typing import Tuple, Iterable
-from .template import Input, Output
+from .serialize import Input, Output
 
 Tensor = Iterable
 

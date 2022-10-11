@@ -1,6 +1,6 @@
 from typing import Tuple
 from kubemo.adaptor.torch import Inference
-from kubemo.template import Input, JsonOutput
+from kubemo.serialize import Input, Json, Image
 from torchvision.transforms import Compose, PILToTensor, Grayscale, Resize, ConvertImageDtype
 from torch.nn import Linear, ReLU, Flatten, Sequential, Module
 from torch.nn.functional import softmax
@@ -45,18 +45,17 @@ labels = ("T-Shirt", "Trouser", "Pullover", "Dress", "Coat", "Sandal", "Shirt", 
 class FashionMNIST(Inference):
 
     def preprocess(self, inputs: Tuple[Input, ...]) -> Tuple[Tensor, ...]:
-        return compose(inputs[0].as_image()), 
+        return compose(inputs[0].image()), 
 
-    def postprocess(self, outputs: Tuple[Tensor, ...]) -> Tuple[JsonOutput,]:
+    def postprocess(self, outputs: Tuple[Tensor, ...]) -> Tuple[Json,]:
         y = softmax(outputs[0], 0)
         values, indices = y.topk(3)
         result = {labels[i]: v.item() for i, v in zip(indices, values)}
-        return JsonOutput(result),
+        return Json(result),
 
 
 # invocation test
 if __name__ == '__main__':
-    from kubemo import IMAGE
 
     images = ['example/ankle-boot.jpg', 'example/t-shirt.jpg']
 
@@ -69,8 +68,8 @@ if __name__ == '__main__':
 
     # load inputs
     batch_input = []
-    for p in images:
-        inputs = (Input(IMAGE, open(p, 'rb')), ) # single input
+    for i in images:
+        inputs = (Image(i), ) # single input
         batch_input.append(inputs)
 
     # call the model with a batch of inputs

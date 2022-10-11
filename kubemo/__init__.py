@@ -1,9 +1,7 @@
 from .inference import *
-from .template import *
-from .protocol import (
-    INFERENCE_IMAGE as IMAGE,
-    INFERENCE_JSON as JSON,
-    INFERENCE_TEXT as TEXT
-)
+from .serialize import *
+from .protocol import IMAGE, JSON, TEXT
+from .client import Client, Connection
+from .server import Server, InferenceHandler
 
 

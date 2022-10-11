@@ -4,7 +4,7 @@ from time import time_ns
 from io import BytesIO, SEEK_END
 from .socket import Socket
 from .errors import BatchShapeError, MessageError, ProtocolVersionError, InvocationError
-from .template import Input, DynamicOutput
+from .serialize import Input, Output
 from .protocol import *
 
 import struct
@@ -76,7 +76,7 @@ class Connection:
         return time_ns() - start
 
 
-    def inference(self, batch: Tuple[Tuple[Input, ...], ...]) -> Tuple[Tuple[DynamicOutput, ...], ...]:
+    def inference(self, batch: Tuple[Tuple[Input, ...], ...]) -> Tuple[Tuple[Output, ...], ...]:
         batch_size_req = len(batch)
         n_input = len(batch[0])
         for inputs in batch[1:]:
@@ -102,7 +102,7 @@ class Connection:
         if batch_size_req != batch_size_res:
             raise BatchShapeError(f'batch sent has {batch_size_req} inputs, but the received batch has {batch_size_res} outputs')
 
-        return tuple(tuple(DynamicOutput(*self.__decode_single_input(reader)) for _ in range(n_output)) for _ in range(batch_size_res))
+        return tuple(tuple(Output(*self.__decode_single_input(reader)) for _ in range(n_output)) for _ in range(batch_size_res))
 
 
     def __decode_single_input(self, reader: BinaryIO) -> Tuple[int, BinaryIO]:
