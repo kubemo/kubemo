@@ -70,7 +70,7 @@ class Inference(Generic[Tensor]):
         is passed to this method to be converted into a framework-specific tensor. 
         You can somewhat normalize the input during processing to satisfy your model's
         input dimension. Then return the tensor that will then be passed to the next
-        method named "forward". Note that what you do in this method is typically 
+        method named "forward". NOTE that what you do in this method is typically 
         the same as that in your training code.
 
         Args:

@@ -5,7 +5,7 @@ KubeMo aims to simplify ML model deployment by aggregating as many machine-learn
 
 ## Installation
 
-Kubemo needs Python (>= 3.7) installed on your device.
+KubeMo needs Python (>= 3.7) installed on your device.
 
 **Manually**
 
@@ -23,7 +23,7 @@ Or replace `install` with `develop` if you'd like to try KubeMo before an actual
 python setup.py develop
 ```
 
-**Using pip** (unavailable yet):
+**Using pip** (unavailable yet)
 
 ```
 pip install kubemo
@@ -35,10 +35,14 @@ You can wait or help us push KubeMo to first stable release :)
 
 See [here](./docs) for detailed information about KubeMo, or you may first take a look at some [basic examples](./example/).
 
+## Contribution
+
+[PR](https://github.com/kubemo/kubemo/pulls)s are welcome. Note that every PR needs to refer to an issue, so please submit an issue before sending a new PR.
+
 ## Feedbacks
 
 Bugs [here](https://github.com/kubemo/kubemo/issues) and ideas [here](https://github.com/kubemo/kubemo/discussions), thanks.
 
 ## License
 
-KubeMo is apache 2.0 licensed.
+KubeMo is Apache 2.0 licensed.
