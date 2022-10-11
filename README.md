@@ -33,7 +33,7 @@ You can wait or help us push KubeMo to first stable release :)
 
 ## Documentation
 
-See [here](./docs) for detailed information about KubeMo, or you may first take a look at some [basic examples](./example/).
+See [here](https://kubemo.github.io/kubemo) for detailed information about KubeMo, or you may first take a look at some [basic examples](./example/).
 
 ## Contribution
 
