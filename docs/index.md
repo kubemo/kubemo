@@ -1,5 +1,3 @@
-# KubeMo
-
 KubeMo aims to simplify ML model deployment by aggregating as many machine-learning frameworks as possible into unified APIs along with the help of cloud-native toolkits.
 
 ## Contents
