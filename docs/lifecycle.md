@@ -23,9 +23,8 @@ For example,
 
 ```python
 from typing import Tuple
-from kubemo import Inference
+from kubemo import Inference, Input, Output
 from numpy import ndarray, concatenate
-from kubemo.serialize import Input, Output
 
 class MyInference(Inference[ndarray]):
 
