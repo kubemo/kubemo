@@ -15,7 +15,6 @@ if __name__ == '__main__':
     model = FashionMNIST(
         path='example/fashion_mnist.onnx',
         input_names=('x', ),
-        output_names=None,
     )
 
     network = 'unix'

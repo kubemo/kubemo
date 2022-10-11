@@ -36,7 +36,6 @@ if __name__ == '__main__':
     model = FashionMNIST(
         path='example/fashion_mnist.onnx',
         input_names=('x', ),
-        output_names=None,
     )
 
     # create a batch of inputs using the two images just selected

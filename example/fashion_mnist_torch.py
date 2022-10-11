@@ -58,11 +58,7 @@ if __name__ == '__main__':
     images = ['example/ankle-boot.jpg', 'example/t-shirt.jpg']
 
     # load the saved model 
-    model = FashionMNIST(
-        path='example/fashion_mnist.pt',
-        input_names=('x', ),
-        output_names=None,
-    )
+    model = FashionMNIST('example/fashion_mnist.pt')
 
     # create a batch of inputs using the two images just selected
     batch_input = []

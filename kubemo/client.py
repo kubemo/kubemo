@@ -4,7 +4,7 @@ from socket import AF_INET, AF_UNIX, SOCK_STREAM, socket
 from time import time_ns
 from io import BytesIO
 from .socket import Socket
-from .errors import BatchShapeError, MessageError, ProtocolVersionError, InvocationError, ParseUrlError
+from .errors import BatchShapeError, MessageError, ProtocolVersionError, InvocationError, ParseAddressError
 from .serialize import Dynamic, Input, Output
 from .protocol import *
 
@@ -121,4 +121,4 @@ def _parse_url(s: str) -> Tuple[str, Union[Tuple[str, int],str]]:
     elif u.scheme == 'tcp':
         return u.scheme, (u.hostname, u.port)
     
-    raise ParseUrlError
+    raise ParseAddressError

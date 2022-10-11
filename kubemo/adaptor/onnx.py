@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Tuple
+from typing import Tuple, Optional
 from numpy import ndarray, concatenate
 from kubemo import Input, Output, Inference as BaseInference
 from onnxruntime import InferenceSession
@@ -7,8 +7,13 @@ from onnxruntime import InferenceSession
 
 class Inference(BaseInference[ndarray]):
 
-    def __init__(self, path: str, input_names: Tuple[str, ...], output_names: Tuple[str, ...]) -> None:
-        super().__init__(path, input_names, output_names)
+    def __init__(self, 
+        path: str, 
+        input_names: Optional[Tuple[str, ...]] = None, 
+        output_names: Optional[Tuple[str, ...]] = None,
+    ) -> None:
+
+        super().__init__(input_names, output_names)
         self.session = InferenceSession(path)
 
     def __del__(self) -> None:

@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Any, Tuple, Generic, TypeVar
+from typing import Optional, Tuple, Generic, TypeVar
 from .serialize import Input, Output
 
 Tensor = TypeVar('Tensor')
@@ -33,7 +33,10 @@ class Inference(Generic[Tensor]):
     the five methods below by embedding your code in them.
     '''
 
-    def __init__(self, path: str, input_names: Tuple[str, ...], output_names: Tuple[str, ...]) -> None:
+    def __init__(self, 
+            input_names: Optional[Tuple[str, ...]] = None, 
+            output_names: Optional[Tuple[str, ...]] = None,
+        ) -> None:
         '''Loads the model from the given path into memory.
 
         To load the model into memory, this method must receive the path to your
@@ -42,13 +45,11 @@ class Inference(Generic[Tensor]):
         if you don't have such a saved model.
 
         Args:
-        path: A string specifying the path to your framework-specific saved model.
         input_names: A tuple of strings each of which names an input of your model.
         output_names: A tuple of strings each of which names an output of your model.
         '''
         self.input_names = input_names
         self.output_names = output_names
-        self.path = path
        
 
     def __del__(self) -> None:

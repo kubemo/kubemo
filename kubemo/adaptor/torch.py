@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Tuple
+from typing import Tuple, Optional
 from torch import load, Tensor, cat
 from kubemo import Inference as BaseInference
 from kubemo.serialize import Input, Output
@@ -7,8 +7,8 @@ from kubemo.serialize import Input, Output
 
 class Inference(BaseInference[Tensor]):
 
-    def __init__(self, path: str, input_names: Tuple[str, ...], output_names: Tuple[str, ...]) -> None:
-        super().__init__(path, input_names, output_names)
+    def __init__(self, path: str, input_names: Optional[Tuple[str, ...]] = None, output_names: Optional[Tuple[str, ...]] = None) -> None:
+        super().__init__(input_names, output_names)
         self.model = load(path)
 
     def __del__(self) -> None:

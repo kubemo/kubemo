@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Tuple
+from typing import Tuple, Optional
 from tensorflow import Tensor, concat
 from keras.models import load_model
 from kubemo import Input, Output, Inference as BaseInference
@@ -7,8 +7,8 @@ from kubemo import Input, Output, Inference as BaseInference
 
 class Inference(BaseInference[Tensor]):
 
-    def __init__(self, path: str, input_names: Tuple[str, ...], output_names: Tuple[str, ...]) -> None:
-        super().__init__(path, input_names, output_names)
+    def __init__(self, path: str, input_names: Optional[Tuple[str, ...]] = None, output_names: Optional[Tuple[str, ...]] = None) -> None:
+        super().__init__(input_names, output_names)
         self.model = load_model(path)
 
     def forward(self, inputs: Tuple[Tensor, ...]) -> Tuple[Tensor, ...]:
@@ -23,5 +23,3 @@ class Inference(BaseInference[Tensor]):
 
     @abstractmethod
     def postprocess(self, outputs: Tuple[Tensor, ...]) -> Tuple[Output, ...]: ...
-
-    
