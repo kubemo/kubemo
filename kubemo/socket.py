@@ -14,7 +14,7 @@ class Socket:
         b = bytes()
         while n > 0:
             packet = self.sock.recv(n)
-            if not packet:
+            if len(packet) == 0:
                 raise ConnectionError('disconnected')
             
             b += packet

@@ -1,12 +1,3 @@
-# from fashion_mnist_onnx import FashionMNIST
-# from kubemo.server import Server
-
-# if __name__ == '__main__':
-#     address = '[::]:50051'
-#     model = FashionMNIST('example/fashion_mnist.onnx')
-#     server = Server(model)
-#     server.run(address)
-
 from kubemo.server import Server, InferenceHandler
 from fashion_mnist_onnx import FashionMNIST
 
@@ -23,8 +14,8 @@ if __name__ == '__main__':
         output_names=None,
     )
 
-    network = 'tcp'
-    address = ('127.0.0.1', 50051)
+    network = 'unix'
+    address = 'test/kubemo.sock'
 
     # create a server and register an inference handler
     with Server(network, address) as server:

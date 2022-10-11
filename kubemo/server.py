@@ -1,47 +1,3 @@
-# from concurrent.futures import ThreadPoolExecutor
-# from .proto.inference_pb2_grpc import InferenceServicer, add_InferenceServicer_to_server
-# from .proto.inference_pb2 import PredictRequest,  PredictResponse, Output
-# from grpc import ServicerContext, StatusCode
-# import grpc
-
-# from .inference import Inference
-# from .template import Input
-
-
-# # todo: remove
-# class Server:
-#     '''An interface abstracting a server to serve an Inference object.
-#     '''
-
-#     def __init__(self, model: Inference) -> None:
-#         self.model = model
-
-#     def run(self, address: str) -> None:
-#         '''Runs the server itself.
-#         '''
-#         server = grpc.server(ThreadPoolExecutor(max_workers=10))
-#         add_InferenceServicer_to_server(Servicer(self.model), server)
-#         server.add_insecure_port(address)
-#         server.start()
-#         server.wait_for_termination()
-
-
-
-# class Servicer(InferenceServicer):
-
-#     def __init__(self, model: Inference) -> None:
-#         self.model = model
-
-#     def Predict(self, req: PredictRequest, ctx: ServicerContext) -> PredictResponse:
-#         try:
-#             batch_input = [Input(i.body) for i in req.batch]
-#             batch_output = self.model(batch_input)
-#             return PredictResponse(batch=[Output(type=o.type, body=o.encode()) for o in batch_output])
-
-#         except Exception as e:
-#             ctx.abort(StatusCode.INTERNAL, str(e))
-
-
 from typing import Tuple, Dict, Union, BinaryIO
 from socket import AF_INET, AF_UNIX, SOCK_STREAM, socket
 from io import BytesIO
@@ -92,8 +48,11 @@ class InferenceHandler(Handler):
         
         batch_size = len(batch_output)
         response_header = struct.pack(INFERENCE_HEADER_FMT, n_input, n_output, batch_size)
-        return response_header + bytes(bytes(self.__encode_single_output(output) for output in outputs) for outputs in batch_output)
-
+        response_payload = bytes()
+        for outputs in batch_output:
+            for output in outputs:
+                response_payload += self.__encode_single_output(output)
+        return response_header + response_payload
 
     def __decode_single_input(self, conn: Socket) -> Tuple[int, BinaryIO]:
         input_type, input_size = struct.unpack('!2L', conn.read(8))
@@ -193,13 +152,13 @@ class Server:
 
     
     def __respond_with_error(self, conn: Socket, status: int) -> None:
-        fixed_header = struct.pack(FIXED_HEADER_FMT, PROTOCOL_VERSION, MESSAGE_ERROR, status, 0, RESERVED_BYTE)
+        fixed_header = struct.pack(FIXED_HEADER_FMT, PROTOCOL_VERSION, MESSAGE_ERROR, status, RESERVED_BYTE, 0)
         return conn.write(fixed_header)
 
 
-    def __respond(self, conn: Socket, kind: int, b: bytes) -> None:
-        fixed_header = struct.pack(FIXED_HEADER_FMT, PROTOCOL_VERSION, kind, MESSAGE_RESPONSE, len(b), RESERVED_BYTE)
-        return conn.write(fixed_header + b)
+    def __respond(self, conn: Socket, kind: int, payload: bytes) -> None:
+        fixed_header = struct.pack(FIXED_HEADER_FMT, PROTOCOL_VERSION, kind, MESSAGE_RESPONSE, RESERVED_BYTE, len(payload))
+        return conn.write(fixed_header + payload)
 
 
     

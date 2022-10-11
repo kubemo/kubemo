@@ -147,7 +147,7 @@ class JsonEncoder(json.JSONEncoder):
 class DynamicOutput(Output):
 
     def __init__(self, kind: int, reader: BinaryIO) -> None:
-        self.kind = kind
+        self._kind = kind
         self.reader = reader
 
     def encode(self) -> bytes:
@@ -167,3 +167,7 @@ class DynamicOutput(Output):
         if self.kind != INFERENCE_IMAGE:
             raise TypeError('output connot be decoded as a PIL image ')
         return Image.open(self.reader)
+
+    @property
+    def kind(self) -> int:
+        return self._kind

@@ -1,7 +1,7 @@
 from typing import BinaryIO, Tuple, Union, Optional
 from socket import AF_INET, AF_UNIX, SOCK_STREAM, socket
 from time import time_ns
-from io import BytesIO
+from io import BytesIO, SEEK_END
 from .socket import Socket
 from .errors import BatchShapeError, MessageError, ProtocolVersionError, InvocationError
 from .template import Input, DynamicOutput
@@ -46,11 +46,11 @@ class Connection:
         '''
         payload_size = 0
         if reader:
-            payload = reader.read()
-            payload_size = len(payload)
+            response_payload = reader.read()
+            payload_size = len(response_payload)
 
         request_header = struct.pack(FIXED_HEADER_FMT, PROTOCOL_VERSION, kind, MESSAGE_REQUEST, RESERVED_BYTE, payload_size)
-        self.socket.write(request_header + payload)
+        self.socket.write(request_header + response_payload)
 
         response_header = self.socket.read(FIXED_HEADER_LEN)
         version, kind, subtype, _, remaining = struct.unpack(FIXED_HEADER_FMT, response_header)
@@ -65,7 +65,8 @@ class Connection:
         if subtype != MESSAGE_RESPONSE:
             raise MessageError
 
-        return BytesIO(self.socket.read(remaining))
+        response_payload = self.socket.read(remaining)
+        return BytesIO(response_payload)
 
 
 
@@ -84,16 +85,18 @@ class Connection:
 
 
         header = struct.pack(INFERENCE_HEADER_FMT, n_input, 0, batch_size_req)
-        writer = BytesIO(header)
+        buffer = BytesIO(header)
+        buffer.seek(len(header))
 
         for inputs in batch:
             for input in inputs:
                 input_type = input.kind
                 input_data = input.reader.read()
                 input_tl = struct.pack('!2L', input_type, len(input_data))
-                writer.write(input_tl + input_data)
+                buffer.write(input_tl + input_data)
 
-        reader = self.__do(MESSAGE_INFERENCE, writer)
+        buffer.seek(0)
+        reader = self.__do(MESSAGE_INFERENCE, buffer)
         n_input, n_output, batch_size_res = struct.unpack(INFERENCE_HEADER_FMT, reader.read(4))
 
         if batch_size_req != batch_size_res:
