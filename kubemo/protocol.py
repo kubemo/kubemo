@@ -38,6 +38,9 @@ octets are required to include:
 The rest of the message uses a series of *TLV* formats to curry a batch of input
 or output.
 '''
+from typing import BinaryIO, Tuple
+from io import BytesIO
+import struct
 
 FIXED_HEADER_FMT = '!4BL'
 FIXED_HEADER_LEN = 8
@@ -64,3 +67,8 @@ INFERENCE_TL_FMT = '!2L'
 TEXT = 1
 JSON = 2
 IMAGE = 3
+
+
+def decode_single_input(reader: BinaryIO) -> Tuple[int, BinaryIO]:
+    input_type, input_size = struct.unpack('!2L', reader.read(8))
+    return input_type, BytesIO(reader.read(input_size))

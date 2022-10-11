@@ -1,14 +1,17 @@
 from kubemo import Image, Client
 
-network = 'unix'
-address = 'test/kubemo.sock'
+endpoint = 'unix://test/kubemo.sock'
 
 with Client() as client:
-    with client.connect(network, address) as conn:
-        batch_input = (
-            (Image('example/t-shirt.jpg'), ),
-            (Image('example/ankle-boot.jpg'), ),
-        )
-        batch_output = conn.inference(batch_input)
-        for outputs in batch_output:
-            print(outputs[0].json())
+    # ping
+    rrt = client.ping(endpoint)
+    print(f'RRT: {rrt}ns')
+
+    # inference
+    batch_input = (
+        (Image('example/t-shirt.jpg'), ),
+        (Image('example/ankle-boot.jpg'), ),
+    )
+    batch_output = client.inference(endpoint, batch_input)
+    for outputs in batch_output:
+        print(outputs[0].decode())

@@ -1,8 +1,8 @@
-from typing import Tuple, Dict, Union, BinaryIO
+from abc import ABC, abstractmethod
+from typing import Tuple, Dict, Union
 from socket import AF_INET, AF_UNIX, SOCK_STREAM, socket
-from io import BytesIO
 from .inference import Inference
-from .serialize import Input, Output
+from .serialize import Dynamic, Output
 from .errors import BatchShapeError
 from .socket import Socket
 from .protocol import *
@@ -12,13 +12,13 @@ import logging
 import os
 
 
-class Handler:
+class Handler(ABC):
 
-    def handle(self, conn: Socket) -> bytes:
-        raise NotImplementedError
+    @abstractmethod
+    def handle(self, conn: Socket) -> bytes: ...
 
-    def kind(self) -> int:
-        raise NotImplementedError
+    @abstractmethod
+    def kind(self) -> int: ...
 
 
 class PingHandler(Handler):
@@ -38,7 +38,7 @@ class InferenceHandler(Handler):
     def handle(self, conn: Socket) -> bytes:
         request_header = conn.read(4)
         n_input, _, batch_size = struct.unpack(INFERENCE_HEADER_FMT, request_header)
-        batch_input = tuple(tuple(Input(*self.__decode_single_input(conn)) for _ in range(n_input)) for _ in range(batch_size))
+        batch_input = tuple(tuple(Dynamic(*decode_single_input(conn)) for _ in range(n_input)) for _ in range(batch_size))
         batch_output = self.model(*batch_input)
 
         n_output = len(batch_input[0])
@@ -54,9 +54,6 @@ class InferenceHandler(Handler):
                 response_payload += self.__encode_single_output(output)
         return response_header + response_payload
 
-    def __decode_single_input(self, conn: Socket) -> Tuple[int, BinaryIO]:
-        input_type, input_size = struct.unpack('!2L', conn.read(8))
-        return input_type, BytesIO(conn.read(input_size))
                 
     def __encode_single_output(self, output: Output) -> bytes:
         output_type = output.kind

@@ -5,7 +5,11 @@ import logging
 
 if __name__ == '__main__':
     # init logger using base config
-    logging.basicConfig()
+    logging.basicConfig(
+        format='%(asctime)s,%(msecs)d %(levelname)-5s [%(filename)s:%(lineno)d] %(message)s',
+        datefmt='%Y-%m-%d:%H:%M:%S',
+        level=logging.DEBUG
+    )
 
     # load the saved model 
     model = FashionMNIST(

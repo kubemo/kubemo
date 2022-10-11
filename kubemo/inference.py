@@ -1,9 +1,11 @@
-from typing import Tuple, Iterable
+from abc import abstractmethod
+from typing import Any, Tuple, Generic, TypeVar
 from .serialize import Input, Output
 
-Tensor = Iterable
+Tensor = TypeVar('Tensor')
 
-class Inference:
+
+class Inference(Generic[Tensor]):
     '''An interface abstracting the invocation lifecycle of any ML model.
 
     All the work in the future is made possible based on an assumption that the
@@ -40,13 +42,13 @@ class Inference:
         if you don't have such a saved model.
 
         Args:
-        path: A string representing the path to your model.
+        path: A string specifying the path to your framework-specific saved model.
         input_names: A tuple of strings each of which names an input of your model.
         output_names: A tuple of strings each of which names an output of your model.
         '''
-        self.path = path
         self.input_names = input_names
         self.output_names = output_names
+        self.path = path
        
 
     def __del__(self) -> None:
@@ -55,12 +57,11 @@ class Inference:
         On deleting an Inference object, this method will be called and the loaded 
         model need to be dropped from memory. So you must manually free out the
         memories taken by your model for implementing this method.
-
-        Raises:
-        NotImplementedError: An error occurred when this method is not implemented
-            by subclasses.
         '''
+        pass
 
+
+    @abstractmethod
     def preprocess(self, inputs: Tuple[Input, ...]) -> Tuple[Tensor, ...]:
         '''Pre-processes an input.
 
@@ -82,6 +83,8 @@ class Inference:
         '''
         raise NotImplementedError
 
+
+    @abstractmethod
     def forward(self, inputs: Tuple[Tensor, ...]) -> Tuple[Tensor, ...]:
         '''Calls the model to make an inference.
 
@@ -101,6 +104,8 @@ class Inference:
         '''
         raise NotImplementedError
 
+
+    @abstractmethod
     def postprocess(self, outputs: Tuple[Tensor, ...]) -> Tuple[Output, ...]:
         '''Post-processes an output.
 
@@ -120,6 +125,7 @@ class Inference:
         raise NotImplementedError
 
 
+    @abstractmethod
     def concat(self, batch: Tuple[Tuple[Tensor, ...], ...]) -> Tuple[Tensor, ...]:
         '''Concatenates a batch of inputs.
 
@@ -135,6 +141,7 @@ class Inference:
             by subclasses.
         '''
         raise NotImplementedError
+
 
     def __call__(self, *args: Tuple[Input, ...]) -> Tuple[Tuple[Output, ...], ...]:
         batch_x = tuple(self.preprocess(x) for x in args)

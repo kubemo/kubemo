@@ -6,6 +6,12 @@ class Socket:
 
     def __init__(self, sock: socket) -> None:
         self.sock = sock
+        
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.close()
 
     def read(self, n: int = -1) -> bytes:
         if n == -1:
