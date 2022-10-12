@@ -33,7 +33,8 @@ class Inference(Generic[Tensor]):
     the five methods below by embedding your code in them.
     '''
 
-    def __init__(self, 
+    def __init__(self,
+            device_id: Optional[int] = None,
             input_names: Optional[Tuple[str, ...]] = None, 
             output_names: Optional[Tuple[str, ...]] = None,
         ) -> None:
@@ -50,6 +51,7 @@ class Inference(Generic[Tensor]):
         '''
         self.input_names = input_names
         self.output_names = output_names
+        self.device_id = device_id
        
 
     def __del__(self) -> None:
