@@ -37,7 +37,7 @@ pip install -e .
 
 ## Documentation
 
-Check out [this site](https://kubemo.github.io/kubemo) for detailed information about KubeMo, or you may first take a look at some [basic examples](./example/).
+Check out [our documentation site](https://kubemo.github.io/kubemo) for detailed information about KubeMo, or you may first take a look at some [basic examples](./example/).
 
 ## Contribution
 
