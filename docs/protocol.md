@@ -43,4 +43,4 @@ When *kind* equals to 1, which indicates an Inferencing call, the following 4 oc
 
 The rest of the message uses a series of *TLV* formats to curry a batch of inputs or outputs.
 
-The implementation of MIP in KubeMo can be found in file [server.py](../kubemo/server.py), [client.py](../kubemo/client.py), [protocol.py](../kubemo/protocol.py).
+The implementation of MIP by KubeMo can be found in files called [server.py](https://github.com/kubemo/kubemo/blob/main/kubemo/server.py), [client.py](https://github.com/kubemo/kubemo/blob/main/kubemo/client.py) and [protocol.py](https://github.com/kubemo/kubemo/blob/main/kubemo/protocol.py).

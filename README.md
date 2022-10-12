@@ -29,11 +29,11 @@ python setup.py develop
 pip install kubemo
 ```
 
-You can wait or help us push KubeMo to first stable release :)
+KubeMo is not ready for being published to [PyPi](https://pypi.org/) until the first stable release. So you can eithor wait or help us reach the day earlier :)
 
 ## Documentation
 
-See [here](https://kubemo.github.io/kubemo) for detailed information about KubeMo, or you may first take a look at some [basic examples](./example/).
+Check out [this site](https://kubemo.github.io/kubemo) for detailed information about KubeMo, or you may first take a look at some [basic examples](./example/).
 
 ## Contribution
 

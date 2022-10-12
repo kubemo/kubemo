@@ -24,4 +24,4 @@ python setup.py develop
 pip install kubemo
 ```
 
-KubeMo is not ready for being published to [PyPi](https://pypi.org/) till the first stable release. So you can eithor wait or help us reach the day earlier :)
+KubeMo is not ready for being published to [PyPi](https://pypi.org/) until the first stable release. So you can eithor wait or help us reach the day earlier :)
