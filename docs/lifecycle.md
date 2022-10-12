@@ -3,8 +3,8 @@
 KubeMo is built based on an assumption that the invocation of any model can be divided into five steps that make up a lifecycle which looks like:
 
 ```
-            +----------------------------+ on receiving an input
-            v                            |
+             +---------------------------+ on receiving a batch of inputs
+             v                           |
 load --> preprocess --> forward --> postprocess --> unload
 ```
 Each node in the graph means an action and is explained as follows.
@@ -28,7 +28,8 @@ from numpy import ndarray, concatenate
 
 class MyInference(Inference[ndarray]):
 
-    def __init__(self, 
+    def __init__(self,
+        device_id: Optional[int] = None,
         input_names: Optional[Tuple[str, ...]] = None, 
         output_names: Optional[Tuple[str, ...]] = None,
     ) -> None:
@@ -46,7 +47,7 @@ class MyInference(Inference[ndarray]):
         return tuple(concatenate(x) for x in zip(*batch))
 ```
 
-Relax, pal :) 
+Relax, bro :) 
 
 The first 5 methods are what we have just talked about, the lifecyle of the model to be invoked. Except that we replaced *load* and *unload* respectively with Pythonoic names as we know it *\_\_init__* and *\_\_del__* so that the model embedded in this class can be loaded on instantiation and dropped by Python's keyword *del*.
 
