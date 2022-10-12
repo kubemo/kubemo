@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 # basics
 name = 'kubemo'
-version = '0.0.dev0'
+version = '0.0.dev1'
 author = 'mivinci'
 description = 'ML model deployment made simple'
 repo_url = 'https://github.com/kubemo/kubemo'

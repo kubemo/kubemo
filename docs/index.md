@@ -10,7 +10,7 @@ KubeMo aims to simplify ML model deployment by aggregating as many machine-learn
 
 ## Contribution
 
-[PR](https://github.com/kubemo/kubemo/pulls)s are welcome. Note that every PR needs to refer to an issue, so please submit an issue before sending a new PR.
+[Pull requests](https://github.com/kubemo/kubemo/pulls) are welcome. Note that every PR needs to refer to an issue, so please submit an issue before sending a new PR.
 
 
 ## Feedbacks
