@@ -10,7 +10,7 @@ A MIP packet consists of an 8-byte long fixed header and a variable payload. Her
 0         7         15        23         31
 +---------+----------+---------+----------+       ---
 | version |   kind   | subtype | reserved |        ^      
-+---------+---------+---------+-----------+   fixed header 
++---------+---------+----------+----------+   fixed header 
 |             remaining size              |        v
 +---------+----------+--------------------+       ---
 | n-input | n-output |     batch size     |        ^
@@ -18,7 +18,7 @@ A MIP packet consists of an 8-byte long fixed header and a variable payload. Her
 |                   ...                   |        |
 +-----------------------------------------+        |
 |            input/output type            |        |
-+-----------------------------------------+  variable payload (on *kind* == 2)
++-----------------------------------------+  variable payload (on *kind* set to 2)
 |            input/output size            |        |
 +-----------------------------------------+        |
 |            input/output data            |        |
@@ -36,7 +36,7 @@ The first 8 octets form the fixed-length header which includes:
 - **remaining size** specifies how many bytes the variable payload takes up.
 
 
-The implementation of MIP by KubeMo can be found in files called [server.py](https://github.com/kubemo/kubemo/blob/main/kubemo/server.py), [client.py](https://github.com/kubemo/kubemo/blob/main/kubemo/client.py) and [protocol.py](https://github.com/kubemo/kubemo/blob/main/kubemo/protocol.py).
+The implementation of MIP by KubeMo can be found in files named [server.py](https://github.com/kubemo/kubemo/blob/main/kubemo/server.py), [client.py](https://github.com/kubemo/kubemo/blob/main/kubemo/client.py) and [protocol.py](https://github.com/kubemo/kubemo/blob/main/kubemo/protocol.py).
 
 
 ### Inference
@@ -58,7 +58,7 @@ Besides an inference call, you can send a ping packet to check out if a server i
 
 ### Errors
 
-No request can always make a successful call to a server. The server can send back a response currying an error by setting *kind* to 0 and *subtype* to whatever the concrete error is. Currently, there are six types of errors in the design.
+No request can always make a successful call to a server. The server may send back a response currying an error by setting *kind* to 0 and *subtype* to whatever the concrete error is. Currently, there are six types of errors in the design.
 
 - *ERROR_PROTOCOL* used when receiving an invalid version.
 - *ERROR_SUBTYPE* used when receiving an invalid subtype. e.g. the packet received by a server should always have *subtype* set to 0.

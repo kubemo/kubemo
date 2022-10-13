@@ -7,17 +7,15 @@ Note that the APIs may vary since we are still in the POC stage.
 
 ## Installation
 
-KubeMo needs Python (>= 3.7) installed on your device.
+KubeMo needs Python (>= 3.7) installed on your device. Then you can install it either from [PyPi](https://pypi.org/) or manally.
 
 **From PyPi**
-
-KubeMo has been published to [PyPi](https://pypi.org/), so you can install it simply by using pip.
 
 ```
 pip install kubemo
 ```
 
-Note that KubeMo is not ready for production until the first stable release, so you can eithor wait or help us reach the day earlier :)
+Note that KubeMo is not ready for production until the first stable release if the POC works, so you can eithor wait or help us reach the day earlier :)
 
 **Manually**
 
