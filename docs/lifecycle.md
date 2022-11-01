@@ -17,7 +17,7 @@ Each node in the graph means an action and is explained as follows.
 
 Apparently, these steps can be somehow implemented as five methods in a class so that model invocation can be made simple and standarized whereas model deployment can no longer be painful for researchers since it is not requred to know what the model to be invoked or deployed looks like or how it is implemented. Any model should always be a blackbox to its users.
 
-That is why KubeMo has defined a generic class named *Inference*, the one from which your self-defined class derives. So you need to implement its abstract methods as follows and put your model-specific code.
+That is why KubeMo has defined a generic class named *Inference*, the one from which your self-defined class derives. So you need to implement its abstract methods by filling them with your model-specific code.
 
 For example,
 
